@@ -10,6 +10,9 @@
 #include <xf86drm.h>
 #include <xf86drmMode.h>
 
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
+
 struct {
 	uint32_t fb_id;
 } plane_props_id;
@@ -176,24 +179,10 @@ bool print_image_on_dumb_framebuffer(struct dumb_framebuffer *fb, char *img_file
 		perror("print_image");
 		return false;
 	}
-	char cmd[512];
-	sprintf(cmd, "magick identify -format '%%[w]x%%[h]' \"%s\"", img_file);
-	FILE *pf = popen(cmd, "r");
-	char res[16];
-	fgets(res, 16, pf);
-	pclose(pf);
-	char *w = strtok(res, "x"), *h = strtok(0, "x");
-	uint32_t img_w = atoi(w), img_h = atoi(h);
+	int img_w,img_h,n;
+	unsigned char *img = stbi_load(img_file, &img_w, &img_h, &n, 0);
 	uint32_t width = img_w > fb->width ? fb->width : img_w;
 	uint32_t height = img_h > fb->height ? fb->height : img_h;
-
-	uint8_t *img = malloc(img_w*img_h*3*sizeof(uint8_t));
-	sprintf(cmd, "magick stream -map rgb -depth 8 \"%s\" tmpimg.dat", img_file);
-	system(cmd);
-	FILE *ptr = fopen("tmpimg.dat", "r");
-	fread(img, img_w*img_h*3*sizeof(uint8_t), 1, ptr);
-	fclose(ptr);
-	system("rm tmpimg.dat");
 
 	for (int i=0; i<height; i++) {
 		for (int j=0; j<width; j++) {
@@ -204,6 +193,6 @@ bool print_image_on_dumb_framebuffer(struct dumb_framebuffer *fb, char *img_file
 		}
 	}
 
-	free(img);
+	stbi_image_free(img);
 	return true;
 }

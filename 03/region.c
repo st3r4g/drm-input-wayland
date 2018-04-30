@@ -23,8 +23,6 @@ static const struct wl_region_interface impl = {
 	.subtract = region_subtract
 };
 
-void region_new(struct wl_client *client, uint32_t id) {
-	struct wl_resource *res = wl_resource_create(client,
-	&wl_region_interface, 1, id);
-	wl_resource_set_implementation(res, &impl, 0, 0);
+void region_new(struct wl_resource *resource) {
+	wl_resource_set_implementation(resource, &impl, 0, 0);
 }

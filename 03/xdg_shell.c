@@ -162,20 +162,6 @@ static const struct zxdg_shell_v6_interface impl = {
 	.pong = xdg_shell_pong
 };
 
-static void xdg_shell_bind(struct wl_client *client, void *data, uint32_t
-version, uint32_t id) {
-	struct wl_resource *resource = wl_resource_create(client,
-	&zxdg_shell_v6_interface, version, id);
+void xdg_shell_new(struct wl_resource *resource) {
 	wl_resource_set_implementation(resource, &impl, 0, 0);
-}
-
-struct xdg_shell *xdg_shell_new(struct wl_display *D) {
-	struct xdg_shell *xdg_shell = calloc(1, sizeof(struct xdg_shell));
-	xdg_shell->global = wl_global_create(D, &zxdg_shell_v6_interface, 1,
-	xdg_shell, xdg_shell_bind);
-	return xdg_shell;
-}
-
-void xdg_shell_free(struct xdg_shell *xdg_shell) {
-	free(xdg_shell);
 }

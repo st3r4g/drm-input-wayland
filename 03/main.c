@@ -9,9 +9,12 @@
 #include <string.h>
 #include <sys/mman.h>
 #include <unistd.h>
-#include <wayland-server-core.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
+
+#include <wayland-server-core.h>
+#include <wayland-server-protocol.h>
+#include "protocols/xdg-shell-unstable-v6-server-protocol.h"
 
 #include "compositor.h"
 #include "output.h"
@@ -44,29 +47,50 @@ struct input {
 	int key_fd;
 };
 
-static void page_flip_handler(int gpu_fd, unsigned int sequence, unsigned int
-tv_sec, unsigned int tv_usec, void *user_data) {
-	void **user_data_array = user_data;
-	struct compositor *C = user_data_array[0];
-	struct drm *drm = user_data_array[1];
-
-	struct surface *s;
-	wl_list_for_each(s, &C->surfaces, link) {
-		uint8_t *img = s->pending->data;
-		uint32_t img_w = s->pending->width, img_h = s->pending->height;
-		for (size_t i=0; i<img_h; i++) {
-			for (size_t j=0; j<img_w; j++) {
-				drm->fb.data[i*drm->fb.stride+j*4+0] =
-				img[i*img_w*4+j*4+0];
-				drm->fb.data[i*drm->fb.stride+j*4+1] =
-				img[i*img_w*4+j*4+1];
-				drm->fb.data[i*drm->fb.stride+j*4+2] =
-				img[i*img_w*4+j*4+2];
-				drm->fb.data[i*drm->fb.stride+j*4+3] =
-				img[i*img_w*4+j*4+3];
+static enum wl_iterator_result for_each_resource_func(struct wl_resource *resource, void *user_data) {
+	struct drm *drm = user_data;
+	const char *class = wl_resource_get_class(resource);
+	if (!strcmp(class, "wl_surface")) {
+		struct surface *surface = wl_resource_get_user_data(resource);
+		if (surface->current->buffer) {
+			struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(surface->current->buffer);
+			uint32_t img_w = wl_shm_buffer_get_width(shm_buffer);
+			uint32_t img_h = wl_shm_buffer_get_height(shm_buffer);
+			uint8_t *img = wl_shm_buffer_get_data(shm_buffer);
+			for (size_t i=0; i<img_h; i++) {
+				for (size_t j=0; j<img_w; j++) {
+					drm->fb.data[i*drm->fb.stride+j*4+0] =
+					img[i*img_w*4+j*4+0];
+					drm->fb.data[i*drm->fb.stride+j*4+1] =
+					img[i*img_w*4+j*4+1];
+					drm->fb.data[i*drm->fb.stride+j*4+2] =
+					img[i*img_w*4+j*4+2];
+					drm->fb.data[i*drm->fb.stride+j*4+3] =
+					img[i*img_w*4+j*4+3];
+				}
 			}
 		}
 	}
+	return WL_ITERATOR_CONTINUE;
+}
+
+static void page_flip_handler(int gpu_fd, unsigned int sequence, unsigned int
+tv_sec, unsigned int tv_usec, void *user_data) {
+	void **user_data_array = user_data;
+	struct wl_display *D = user_data_array[0];
+	struct drm *drm = user_data_array[1];
+
+	struct wl_client *client;
+	struct wl_list *client_list = wl_display_get_client_list(D);
+	wl_client_for_each(client, client_list) {
+		wl_client_for_each_resource(client, for_each_resource_func, drm);
+	}
+
+/*	struct surface *s;
+	wl_list_for_each(s, &C->surfaces, link) {
+		uint8_t *img = s->pending->data;
+		uint32_t img_w = s->pending->width, img_h = s->pending->height;
+	}*/
 
 	if (drmModeAtomicCommit(gpu_fd, drm->req, DRM_MODE_PAGE_FLIP_EVENT, user_data))
 		fprintf(stderr, "atomic commit failed\n");
@@ -94,14 +118,35 @@ int start(struct drm *drm, struct input *input);
 int end(struct drm *drm, struct input *input);
 bool create_dumb_framebuffer(int drm_fd, uint32_t width, uint32_t height, struct dumb_framebuffer *fb);
 
+static void compositor_bind(struct wl_client *client, void *data, uint32_t
+version, uint32_t id) {
+	struct wl_resource *resource = wl_resource_create(client,
+	&wl_compositor_interface, version, id);
+	compositor_new(resource);
+}
+
+static void output_bind(struct wl_client *client, void *data, uint32_t version,
+uint32_t id) {
+	struct wl_resource *resource = wl_resource_create(client,
+	&wl_output_interface, version, id);
+	output_new(resource);
+}
+
+static void xdg_shell_bind(struct wl_client *client, void *data, uint32_t
+version, uint32_t id) {
+	struct wl_resource *resource = wl_resource_create(client,
+	&zxdg_shell_v6_interface, version, id);
+	xdg_shell_new(resource);
+}
+
 int main(int argc, char *argv[]) {
 	struct wl_display *D = wl_display_create();
 	wl_display_add_socket_auto(D);
 
-	struct compositor *C = compositor_new(D);
-	output_new(D);
-	struct xdg_shell *S = xdg_shell_new(D);
+	wl_global_create(D, &wl_compositor_interface, 4, 0, compositor_bind);
+	wl_global_create(D, &wl_output_interface, 3, 0, output_bind);
 	wl_display_init_shm(D);
+	wl_global_create(D, &zxdg_shell_v6_interface, 1, 0, xdg_shell_bind);
 
 	struct drm drm;
 	struct input input;
@@ -114,7 +159,7 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "atomic allocation failed\n");
 	if (drmModeAtomicAddProperty(drm.req, drm.plane_id, plane_props_id.fb_id, drm.fb.id) < 0)
 		fprintf(stderr, "atomic add property failed\n");
-	void *user_data_array[] = {C, &drm};
+	void *user_data_array[] = {D, &drm};
 	if (drmModeAtomicCommit(drm.gpu_fd, drm.req, DRM_MODE_PAGE_FLIP_EVENT, user_data_array)) {
 		fprintf(stderr, "atomic commit failed\n");
 		return 1;
@@ -126,12 +171,10 @@ int main(int argc, char *argv[]) {
 
 	pid_t pid = fork();
 	if (!pid)
-		execl("/bin/weston-terminal", "weston-terminal", "--shell=bash", (char*)0);
+		execl("/bin/weston-info", "weston-info", (char*)0);
 
 	wl_display_run(D);
 
-	xdg_shell_free(S);
-	compositor_free(C);
 	wl_display_destroy(D);
 
 	if (end(&drm, &input))

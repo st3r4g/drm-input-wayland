@@ -8,15 +8,16 @@
 
 static void compositor_create_surface(struct wl_client *client, struct
 wl_resource *resource, uint32_t id) {
-	struct compositor *compositor = wl_resource_get_user_data(resource);
-	struct surface *surface = surface_new(client, id);
-	wl_list_insert(&compositor->surfaces, &surface->link);
+	struct wl_resource *surface_resource = wl_resource_create(client,
+	&wl_surface_interface, 4, id);
+	surface_new(surface_resource);
 }
 
 static void compositor_create_region(struct wl_client *client, struct
 wl_resource *resource, uint32_t id) {
-	struct compositor *compositor = wl_resource_get_user_data(resource);
-	region_new(client, id);
+	struct wl_resource *region_resource = wl_resource_create(client,
+	&wl_region_interface, 1, id);
+	region_new(region_resource);
 }
 
 static const struct wl_compositor_interface impl = {
@@ -24,22 +25,7 @@ static const struct wl_compositor_interface impl = {
 	.create_region = compositor_create_region
 };
 
-static void compositor_bind(struct wl_client *client, void *data, uint32_t
-version, uint32_t id) {
-	struct compositor *compositor = data;
-	struct wl_resource *res = wl_resource_create(client,
-	&wl_compositor_interface, version, id);
-	wl_resource_set_implementation(res, &impl, compositor, 0);
+void compositor_new(struct wl_resource *resource) {
+	wl_resource_set_implementation(resource, &impl, 0, 0);
 }
 
-struct compositor *compositor_new(struct wl_display *D) {
-	struct compositor *compositor = calloc(1, sizeof(struct compositor));
-	wl_global_create(D, &wl_compositor_interface, 4, compositor,
-	compositor_bind);
-	wl_list_init(&compositor->surfaces);
-	return compositor;
-}
-
-void compositor_free(struct compositor *compositor) {
-	free(compositor);
-}

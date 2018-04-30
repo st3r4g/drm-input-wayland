@@ -6,6 +6,7 @@ struct surface_state {
 
 struct surface {
 	struct surface_state *current, *pending;
+	struct wl_resource *frame;
 };
 
 void surface_new(struct wl_resource *resource);

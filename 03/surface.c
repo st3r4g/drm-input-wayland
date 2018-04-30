@@ -23,7 +23,8 @@ static void surface_damage(struct wl_client *client, struct wl_resource
 
 static void surface_frame(struct wl_client *client, struct wl_resource
 *resource, uint32_t callback) {
-
+	struct surface *surface = wl_resource_get_user_data(resource);
+	surface->frame = wl_resource_create(client, &wl_callback_interface, 1, callback);
 }
 
 static void surface_set_opaque_region(struct wl_client *client, struct

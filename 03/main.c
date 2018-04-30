@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/mman.h>
+#include <time.h>
 #include <unistd.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
@@ -69,6 +70,16 @@ static enum wl_iterator_result for_each_resource_func(struct wl_resource *resour
 					img[i*img_w*4+j*4+3];
 				}
 			}
+			wl_buffer_send_release(surface->current->buffer);
+		}
+		if (surface->frame) {
+			struct timespec tp;
+			clock_gettime(CLOCK_REALTIME, &tp);
+			long msec = tp.tv_sec * 1000 + tp.tv_nsec / 1000000;
+			printf("%ld\n", msec);
+			wl_callback_send_done(surface->frame, (uint32_t)msec);
+			wl_resource_destroy(surface->frame);
+			surface->frame = 0;
 		}
 	}
 	return WL_ITERATOR_CONTINUE;
@@ -85,12 +96,6 @@ tv_sec, unsigned int tv_usec, void *user_data) {
 	wl_client_for_each(client, client_list) {
 		wl_client_for_each_resource(client, for_each_resource_func, drm);
 	}
-
-/*	struct surface *s;
-	wl_list_for_each(s, &C->surfaces, link) {
-		uint8_t *img = s->pending->data;
-		uint32_t img_w = s->pending->width, img_h = s->pending->height;
-	}*/
 
 	if (drmModeAtomicCommit(gpu_fd, drm->req, DRM_MODE_PAGE_FLIP_EVENT, user_data))
 		fprintf(stderr, "atomic commit failed\n");
@@ -171,7 +176,7 @@ int main(int argc, char *argv[]) {
 
 	pid_t pid = fork();
 	if (!pid)
-		execl("/bin/weston-info", "weston-info", (char*)0);
+		execl("/bin/weston-simple-shm", "weston-simple-shm", (char*)0);
 
 	wl_display_run(D);
 

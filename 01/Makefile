@@ -1,2 +1,2 @@
 all:
-	gcc -I /usr/include/libdrm -l drm main.c -o main
+	gcc -I /usr/include/libdrm -l drm main.c -o main -lm

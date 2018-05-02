@@ -54,7 +54,7 @@ static enum wl_iterator_result for_each_resource_func(struct wl_resource *resour
 	if (!strcmp(class, "wl_surface")) {
 		struct surface *surface = wl_resource_get_user_data(resource);
 		if (surface->current->buffer) {
-			struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(surface->current->buffer);
+/*			struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(surface->current->buffer);
 			uint32_t img_w = wl_shm_buffer_get_width(shm_buffer);
 			uint32_t img_h = wl_shm_buffer_get_height(shm_buffer);
 			uint8_t *img = wl_shm_buffer_get_data(shm_buffer);
@@ -69,7 +69,7 @@ static enum wl_iterator_result for_each_resource_func(struct wl_resource *resour
 					drm->fb.data[i*drm->fb.stride+j*4+3] =
 					img[i*img_w*4+j*4+3];
 				}
-			}
+			}*/
 			wl_buffer_send_release(surface->current->buffer);
 		}
 		if (surface->frame) {
@@ -85,11 +85,20 @@ static enum wl_iterator_result for_each_resource_func(struct wl_resource *resour
 	return WL_ITERATOR_CONTINUE;
 }
 
+unsigned int old_tv_sec, old_tv_usec, count = 0;
+
 static void page_flip_handler(int gpu_fd, unsigned int sequence, unsigned int
 tv_sec, unsigned int tv_usec, void *user_data) {
 	void **user_data_array = user_data;
 	struct wl_display *D = user_data_array[0];
 	struct drm *drm = user_data_array[1];
+
+	if (count) {
+//		printf("delta_usec: %d\n",
+//		tv_usec-old_tv_usec+(tv_sec-old_tv_sec)*1000000);
+	}
+	old_tv_sec = tv_sec, old_tv_usec = tv_usec;
+	count++;
 
 	struct wl_client *client;
 	struct wl_list *client_list = wl_display_get_client_list(D);
@@ -205,13 +214,13 @@ int end(struct drm *drm, struct input *input) {
 }
 
 int start(struct drm *drm, struct input *input) {
-	drm->gpu_fd = open("/dev/dri/card0", O_RDWR | O_NONBLOCK);
+	drm->gpu_fd = open("/dev/dri/card0", O_RDWR|O_CLOEXEC|O_NOCTTY|O_NONBLOCK);
 	if (drm->gpu_fd < 0) {
 		perror("open /dev/dri/card0");
 		return 1;
 	}
 
-	input->key_fd = open("/dev/input/event4", O_RDONLY | O_NONBLOCK);
+	input->key_fd = open("/dev/input/event4", O_RDWR|O_CLOEXEC|O_NOCTTY|O_NONBLOCK);
 	if (input->key_fd < 0) {
 		perror("open /dev/input/event4");
 		return 1;

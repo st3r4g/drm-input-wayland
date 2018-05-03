@@ -9,5 +9,6 @@ Folders explained:
 * 01 -> minimal color/image rendering (dumb-buffer) for 3 seconds
 * 02 -> minimal color rendering (dumb-buffer), exit on keypress
 * 03 -> Wayland protocol implementation [in progress]
+* 99 -> Headless compositor [for debugging]
 
-observation: with dumb-buffers weston-simple-shm runs at 20Hz on my laptop
+TODO: switch from dumb-buffers to GLES3

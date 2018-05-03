@@ -54,7 +54,7 @@ static enum wl_iterator_result for_each_resource_func(struct wl_resource *resour
 	if (!strcmp(class, "wl_surface")) {
 		struct surface *surface = wl_resource_get_user_data(resource);
 		if (surface->current->buffer) {
-/*			struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(surface->current->buffer);
+			struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(surface->current->buffer);
 			uint32_t img_w = wl_shm_buffer_get_width(shm_buffer);
 			uint32_t img_h = wl_shm_buffer_get_height(shm_buffer);
 			uint8_t *img = wl_shm_buffer_get_data(shm_buffer);
@@ -69,14 +69,13 @@ static enum wl_iterator_result for_each_resource_func(struct wl_resource *resour
 					drm->fb.data[i*drm->fb.stride+j*4+3] =
 					img[i*img_w*4+j*4+3];
 				}
-			}*/
+			}
 			wl_buffer_send_release(surface->current->buffer);
 		}
 		if (surface->frame) {
 			struct timespec tp;
 			clock_gettime(CLOCK_REALTIME, &tp);
 			long msec = tp.tv_sec * 1000 + tp.tv_nsec / 1000000;
-			printf("%ld\n", msec);
 			wl_callback_send_done(surface->frame, (uint32_t)msec);
 			wl_resource_destroy(surface->frame);
 			surface->frame = 0;
@@ -89,16 +88,15 @@ unsigned int old_tv_sec, old_tv_usec, count = 0;
 
 static void page_flip_handler(int gpu_fd, unsigned int sequence, unsigned int
 tv_sec, unsigned int tv_usec, void *user_data) {
+/*	struct timespec tp;
+	unsigned int time;
+	clock_gettime(CLOCK_REALTIME, &tp);
+	time = (tp.tv_sec * 1000000L) + (tp.tv_nsec / 1000);
+	printf("[%10.3f] FRAME\n", time / 1000.0);*/
+
 	void **user_data_array = user_data;
 	struct wl_display *D = user_data_array[0];
 	struct drm *drm = user_data_array[1];
-
-	if (count) {
-//		printf("delta_usec: %d\n",
-//		tv_usec-old_tv_usec+(tv_sec-old_tv_sec)*1000000);
-	}
-	old_tv_sec = tv_sec, old_tv_usec = tv_usec;
-	count++;
 
 	struct wl_client *client;
 	struct wl_list *client_list = wl_display_get_client_list(D);
@@ -106,9 +104,12 @@ tv_sec, unsigned int tv_usec, void *user_data) {
 		wl_client_for_each_resource(client, for_each_resource_func, drm);
 	}
 
-	if (drmModeAtomicCommit(gpu_fd, drm->req, DRM_MODE_PAGE_FLIP_EVENT, user_data))
+	if (drmModeAtomicCommit(gpu_fd, drm->req, DRM_MODE_PAGE_FLIP_EVENT |
+	DRM_MODE_ATOMIC_NONBLOCK, user_data))
 		fprintf(stderr, "atomic commit failed\n");
 }
+
+
 
 static int gpu_ev_handler(int gpu_fd, uint32_t mask, void *data) {
 	drmEventContext ev_context = {
@@ -174,7 +175,7 @@ int main(int argc, char *argv[]) {
 	if (drmModeAtomicAddProperty(drm.req, drm.plane_id, plane_props_id.fb_id, drm.fb.id) < 0)
 		fprintf(stderr, "atomic add property failed\n");
 	void *user_data_array[] = {D, &drm};
-	if (drmModeAtomicCommit(drm.gpu_fd, drm.req, DRM_MODE_PAGE_FLIP_EVENT, user_data_array)) {
+	if (drmModeAtomicCommit(drm.gpu_fd, drm.req, DRM_MODE_PAGE_FLIP_EVENT | DRM_MODE_ATOMIC_NONBLOCK, user_data_array)) {
 		fprintf(stderr, "atomic commit failed\n");
 		return 1;
 	}

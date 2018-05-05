@@ -1,0 +1,1302 @@
+[800259.046]  -> wl_display@1.get_registry(new id wl_registry@2)
+[800259.094]  -> wl_display@1.sync(new id wl_callback@3)
+[800259.205] wl_display@1.delete_id(3)
+[800259.225] wl_registry@2.global(1, "wl_compositor", 4)
+[800259.242]  -> wl_registry@2.bind(1, "wl_compositor", 1, new id [unknown]@4)
+[800259.269] wl_registry@2.global(2, "wl_output", 3)
+[800259.283] wl_registry@2.global(3, "wl_shm", 1)
+[800259.298]  -> wl_registry@2.bind(3, "wl_shm", 1, new id [unknown]@5)
+[800259.317] wl_registry@2.global(4, "zxdg_shell_v6", 1)
+[800259.332]  -> wl_registry@2.bind(4, "zxdg_shell_v6", 1, new id [unknown]@6)
+[800259.351] wl_callback@3.done(0)
+[800259.359]  -> wl_display@1.sync(new id wl_callback@3)
+[800259.499] wl_display@1.delete_id(3)
+[800259.517] wl_shm@5.format(0)
+[800259.525] wl_shm@5.format(1)
+[800259.532] wl_callback@3.done(0)
+[800259.540]  -> wl_compositor@4.create_surface(new id wl_surface@3)
+[800259.550]  -> zxdg_shell_v6@6.get_xdg_surface(new id zxdg_surface_v6@7, wl_surface@3)
+[800259.564]  -> zxdg_surface_v6@7.get_toplevel(new id zxdg_toplevel_v6@8)
+[800259.573]  -> zxdg_toplevel_v6@8.set_title("simple-shm")
+[800259.580]  -> wl_surface@3.commit()
+[800259.587]  -> wl_surface@3.damage(0, 0, 250, 250)
+[800259.731] zxdg_surface_v6@7.configure(0)
+[800259.750]  -> zxdg_surface_v6@7.ack_configure(0)
+[800259.848]  -> wl_shm@5.create_pool(new id wl_shm_pool@9, fd 5, 250000)
+[800259.868]  -> wl_shm_pool@9.create_buffer(new id wl_buffer@10, 0, 250, 250, 1000, 1)
+[800259.896]  -> wl_shm_pool@9.destroy()
+[800260.223]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800260.241]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800260.259]  -> wl_surface@3.frame(new id wl_callback@11)
+[800260.268]  -> wl_surface@3.commit()
+[800260.709] wl_display@1.delete_id(9)
+[800260.728] wl_buffer@10.release()
+[800276.236] wl_display@1.delete_id(11)
+[800276.322] wl_callback@11.done(23776106)
+[800276.677]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800276.709]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800276.741]  -> wl_surface@3.frame(new id wl_callback@11)
+[800276.757]  -> wl_surface@3.commit()
+[800277.328] wl_buffer@10.release()
+[800293.040] wl_display@1.delete_id(11)
+[800293.147] wl_callback@11.done(23776122)
+[800293.652]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800293.698]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800293.745]  -> wl_surface@3.frame(new id wl_callback@11)
+[800293.771]  -> wl_surface@3.commit()
+[800294.245] wl_buffer@10.release()
+[800309.666] wl_display@1.delete_id(11)
+[800309.766] wl_callback@11.done(23776139)
+[800310.267]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800310.312]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800310.360]  -> wl_surface@3.frame(new id wl_callback@11)
+[800310.384]  -> wl_surface@3.commit()
+[800310.729] wl_buffer@10.release()
+[800326.354] wl_display@1.delete_id(11)
+[800326.451] wl_callback@11.done(23776156)
+[800326.953]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800326.998]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800327.045]  -> wl_surface@3.frame(new id wl_callback@11)
+[800327.069]  -> wl_surface@3.commit()
+[800327.410] wl_buffer@10.release()
+[800343.051] wl_display@1.delete_id(11)
+[800343.150] wl_callback@11.done(23776172)
+[800343.654]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800343.700]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800343.747]  -> wl_surface@3.frame(new id wl_callback@11)
+[800343.771]  -> wl_surface@3.commit()
+[800344.156] wl_buffer@10.release()
+[800359.686] wl_display@1.delete_id(11)
+[800359.782] wl_callback@11.done(23776189)
+[800360.287]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800360.333]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800360.380]  -> wl_surface@3.frame(new id wl_callback@11)
+[800360.404]  -> wl_surface@3.commit()
+[800360.741] wl_buffer@10.release()
+[800376.358] wl_display@1.delete_id(11)
+[800376.458] wl_callback@11.done(23776206)
+[800377.006]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800377.055]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800377.102]  -> wl_surface@3.frame(new id wl_callback@11)
+[800377.126]  -> wl_surface@3.commit()
+[800377.590] wl_buffer@10.release()
+[800393.072] wl_display@1.delete_id(11)
+[800393.173] wl_callback@11.done(23776222)
+[800393.692]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800393.739]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800393.787]  -> wl_surface@3.frame(new id wl_callback@11)
+[800393.811]  -> wl_surface@3.commit()
+[800394.269] wl_buffer@10.release()
+[800409.762] wl_display@1.delete_id(11)
+[800409.862] wl_callback@11.done(23776239)
+[800410.362]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800410.408]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800410.455]  -> wl_surface@3.frame(new id wl_callback@11)
+[800410.479]  -> wl_surface@3.commit()
+[800410.945] wl_buffer@10.release()
+[800426.462] wl_display@1.delete_id(11)
+[800426.563] wl_callback@11.done(23776256)
+[800427.083]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800427.130]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800427.178]  -> wl_surface@3.frame(new id wl_callback@11)
+[800427.202]  -> wl_surface@3.commit()
+[800427.673] wl_buffer@10.release()
+[800443.087] wl_display@1.delete_id(11)
+[800443.187] wl_callback@11.done(23776272)
+[800443.689]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800443.734]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800443.781]  -> wl_surface@3.frame(new id wl_callback@11)
+[800443.805]  -> wl_surface@3.commit()
+[800444.194] wl_buffer@10.release()
+[800459.724] wl_display@1.delete_id(11)
+[800459.824] wl_callback@11.done(23776289)
+[800460.328]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800460.374]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800460.422]  -> wl_surface@3.frame(new id wl_callback@11)
+[800460.445]  -> wl_surface@3.commit()
+[800460.817] wl_buffer@10.release()
+[800476.430] wl_display@1.delete_id(11)
+[800476.530] wl_callback@11.done(23776306)
+[800477.032]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800477.078]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800477.126]  -> wl_surface@3.frame(new id wl_callback@11)
+[800477.150]  -> wl_surface@3.commit()
+[800477.529] wl_buffer@10.release()
+[800493.118] wl_display@1.delete_id(11)
+[800493.219] wl_callback@11.done(23776322)
+[800493.721]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800493.766]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800493.814]  -> wl_surface@3.frame(new id wl_callback@11)
+[800493.838]  -> wl_surface@3.commit()
+[800494.226] wl_buffer@10.release()
+[800509.749] wl_display@1.delete_id(11)
+[800509.863] wl_callback@11.done(23776339)
+[800510.437]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800510.486]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800510.533]  -> wl_surface@3.frame(new id wl_callback@11)
+[800510.556]  -> wl_surface@3.commit()
+[800510.956] wl_buffer@10.release()
+[800526.473] wl_display@1.delete_id(11)
+[800526.572] wl_callback@11.done(23776356)
+[800527.080]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800527.126]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800527.174]  -> wl_surface@3.frame(new id wl_callback@11)
+[800527.198]  -> wl_surface@3.commit()
+[800527.570] wl_buffer@10.release()
+[800543.140] wl_display@1.delete_id(11)
+[800543.241] wl_callback@11.done(23776373)
+[800543.740]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800543.786]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800543.834]  -> wl_surface@3.frame(new id wl_callback@11)
+[800543.857]  -> wl_surface@3.commit()
+[800544.252] wl_buffer@10.release()
+[800559.775] wl_display@1.delete_id(11)
+[800559.875] wl_callback@11.done(23776389)
+[800560.376]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800560.422]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800560.469]  -> wl_surface@3.frame(new id wl_callback@11)
+[800560.493]  -> wl_surface@3.commit()
+[800560.863] wl_buffer@10.release()
+[800576.493] wl_display@1.delete_id(11)
+[800576.592] wl_callback@11.done(23776406)
+[800577.093]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800577.139]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800577.186]  -> wl_surface@3.frame(new id wl_callback@11)
+[800577.210]  -> wl_surface@3.commit()
+[800577.587] wl_buffer@10.release()
+[800593.151] wl_display@1.delete_id(11)
+[800593.251] wl_callback@11.done(23776423)
+[800593.757]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800593.825]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800593.874]  -> wl_surface@3.frame(new id wl_callback@11)
+[800593.898]  -> wl_surface@3.commit()
+[800594.293] wl_buffer@10.release()
+[800609.818] wl_display@1.delete_id(11)
+[800609.914] wl_callback@11.done(23776439)
+[800610.414]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800610.459]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800610.507]  -> wl_surface@3.frame(new id wl_callback@11)
+[800610.531]  -> wl_surface@3.commit()
+[800610.909] wl_buffer@10.release()
+[800626.512] wl_display@1.delete_id(11)
+[800626.611] wl_callback@11.done(23776456)
+[800627.114]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800627.160]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800627.207]  -> wl_surface@3.frame(new id wl_callback@11)
+[800627.230]  -> wl_surface@3.commit()
+[800627.601] wl_buffer@10.release()
+[800643.177] wl_display@1.delete_id(11)
+[800643.276] wl_callback@11.done(23776473)
+[800643.778]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800643.823]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800643.871]  -> wl_surface@3.frame(new id wl_callback@11)
+[800643.894]  -> wl_surface@3.commit()
+[800644.300] wl_buffer@10.release()
+[800659.832] wl_display@1.delete_id(11)
+[800659.931] wl_callback@11.done(23776489)
+[800660.437]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800660.483]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800660.530]  -> wl_surface@3.frame(new id wl_callback@11)
+[800660.553]  -> wl_surface@3.commit()
+[800660.924] wl_buffer@10.release()
+[800676.544] wl_display@1.delete_id(11)
+[800676.643] wl_callback@11.done(23776506)
+[800677.150]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800677.196]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800677.244]  -> wl_surface@3.frame(new id wl_callback@11)
+[800677.268]  -> wl_surface@3.commit()
+[800677.643] wl_buffer@10.release()
+[800693.216] wl_display@1.delete_id(11)
+[800693.315] wl_callback@11.done(23776523)
+[800693.818]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800693.863]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800693.911]  -> wl_surface@3.frame(new id wl_callback@11)
+[800693.935]  -> wl_surface@3.commit()
+[800694.313] wl_buffer@10.release()
+[800709.875] wl_display@1.delete_id(11)
+[800709.974] wl_callback@11.done(23776539)
+[800710.472]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800710.517]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800710.565]  -> wl_surface@3.frame(new id wl_callback@11)
+[800710.588]  -> wl_surface@3.commit()
+[800710.960] wl_buffer@10.release()
+[800726.558] wl_display@1.delete_id(11)
+[800726.658] wl_callback@11.done(23776556)
+[800727.164]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800727.210]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800727.258]  -> wl_surface@3.frame(new id wl_callback@11)
+[800727.281]  -> wl_surface@3.commit()
+[800727.658] wl_buffer@10.release()
+[800743.215] wl_display@1.delete_id(11)
+[800743.314] wl_callback@11.done(23776573)
+[800743.813]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800743.858]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800743.906]  -> wl_surface@3.frame(new id wl_callback@11)
+[800743.930]  -> wl_surface@3.commit()
+[800744.302] wl_buffer@10.release()
+[800759.903] wl_display@1.delete_id(11)
+[800760.002] wl_callback@11.done(23776589)
+[800760.503]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800760.549]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800760.596]  -> wl_surface@3.frame(new id wl_callback@11)
+[800760.620]  -> wl_surface@3.commit()
+[800760.998] wl_buffer@10.release()
+[800776.578] wl_display@1.delete_id(11)
+[800776.678] wl_callback@11.done(23776606)
+[800777.184]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800777.229]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800777.277]  -> wl_surface@3.frame(new id wl_callback@11)
+[800777.300]  -> wl_surface@3.commit()
+[800777.680] wl_buffer@10.release()
+[800793.234] wl_display@1.delete_id(11)
+[800793.333] wl_callback@11.done(23776623)
+[800793.838]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800793.885]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800793.933]  -> wl_surface@3.frame(new id wl_callback@11)
+[800793.956]  -> wl_surface@3.commit()
+[800794.364] wl_buffer@10.release()
+[800809.939] wl_display@1.delete_id(11)
+[800810.038] wl_callback@11.done(23776639)
+[800810.542]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800810.588]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800810.635]  -> wl_surface@3.frame(new id wl_callback@11)
+[800810.659]  -> wl_surface@3.commit()
+[800811.040] wl_buffer@10.release()
+[800826.611] wl_display@1.delete_id(11)
+[800826.712] wl_callback@11.done(23776656)
+[800827.214]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800827.259]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800827.307]  -> wl_surface@3.frame(new id wl_callback@11)
+[800827.331]  -> wl_surface@3.commit()
+[800827.712] wl_buffer@10.release()
+[800843.256] wl_display@1.delete_id(11)
+[800843.355] wl_callback@11.done(23776673)
+[800843.855]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800843.901]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800843.948]  -> wl_surface@3.frame(new id wl_callback@11)
+[800843.971]  -> wl_surface@3.commit()
+[800844.340] wl_buffer@10.release()
+[800860.033] wl_display@1.delete_id(11)
+[800860.130] wl_callback@11.done(23776689)
+[800860.674]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800860.723]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800860.804]  -> wl_surface@3.frame(new id wl_callback@11)
+[800860.829]  -> wl_surface@3.commit()
+[800861.249] wl_buffer@10.release()
+[800876.656] wl_display@1.delete_id(11)
+[800876.757] wl_callback@11.done(23776706)
+[800877.276]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800877.324]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800877.372]  -> wl_surface@3.frame(new id wl_callback@11)
+[800877.396]  -> wl_surface@3.commit()
+[800877.831] wl_buffer@10.release()
+[800893.326] wl_display@1.delete_id(11)
+[800893.429] wl_callback@11.done(23776723)
+[800893.938]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800893.983]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800894.031]  -> wl_surface@3.frame(new id wl_callback@11)
+[800894.055]  -> wl_surface@3.commit()
+[800894.473] wl_buffer@10.release()
+[800910.029] wl_display@1.delete_id(11)
+[800910.132] wl_callback@11.done(23776739)
+[800910.660]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800910.707]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800910.786]  -> wl_surface@3.frame(new id wl_callback@11)
+[800910.814]  -> wl_surface@3.commit()
+[800911.229] wl_buffer@10.release()
+[800926.670] wl_display@1.delete_id(11)
+[800926.774] wl_callback@11.done(23776756)
+[800927.340]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800927.389]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800927.483]  -> wl_surface@3.frame(new id wl_callback@11)
+[800927.508]  -> wl_surface@3.commit()
+[800927.917] wl_buffer@10.release()
+[800943.318] wl_display@1.delete_id(11)
+[800943.421] wl_callback@11.done(23776773)
+[800943.982]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800944.031]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800944.079]  -> wl_surface@3.frame(new id wl_callback@11)
+[800944.130]  -> wl_surface@3.commit()
+[800944.469] wl_buffer@10.release()
+[800960.028] wl_display@1.delete_id(11)
+[800960.129] wl_callback@11.done(23776789)
+[800960.693]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800960.742]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800960.816]  -> wl_surface@3.frame(new id wl_callback@11)
+[800960.840]  -> wl_surface@3.commit()
+[800961.177] wl_buffer@10.release()
+[800976.675] wl_display@1.delete_id(11)
+[800976.777] wl_callback@11.done(23776806)
+[800977.339]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800977.389]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800977.462]  -> wl_surface@3.frame(new id wl_callback@11)
+[800977.486]  -> wl_surface@3.commit()
+[800977.897] wl_buffer@10.release()
+[800993.362] wl_display@1.delete_id(11)
+[800993.462] wl_callback@11.done(23776823)
+[800993.983]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[800994.030]  -> wl_surface@3.damage(20, 20, 210, 210)
+[800994.078]  -> wl_surface@3.frame(new id wl_callback@11)
+[800994.134]  -> wl_surface@3.commit()
+[800994.550] wl_buffer@10.release()
+[801010.059] wl_display@1.delete_id(11)
+[801010.159] wl_callback@11.done(23776839)
+[801010.716]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801010.828]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801010.878]  -> wl_surface@3.frame(new id wl_callback@11)
+[801010.901]  -> wl_surface@3.commit()
+[801011.241] wl_buffer@10.release()
+[801026.725] wl_display@1.delete_id(11)
+[801026.823] wl_callback@11.done(23776856)
+[801027.387]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801027.462]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801027.511]  -> wl_surface@3.frame(new id wl_callback@11)
+[801027.534]  -> wl_surface@3.commit()
+[801027.946] wl_buffer@10.release()
+[801043.381] wl_display@1.delete_id(11)
+[801043.481] wl_callback@11.done(23776873)
+[801044.006]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801044.053]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801044.133]  -> wl_surface@3.frame(new id wl_callback@11)
+[801044.157]  -> wl_surface@3.commit()
+[801044.566] wl_buffer@10.release()
+[801060.078] wl_display@1.delete_id(11)
+[801060.181] wl_callback@11.done(23776889)
+[801060.738]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801060.815]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801060.863]  -> wl_surface@3.frame(new id wl_callback@11)
+[801060.887]  -> wl_surface@3.commit()
+[801061.232] wl_buffer@10.release()
+[801076.764] wl_display@1.delete_id(11)
+[801076.856] wl_callback@11.done(23776906)
+[801077.355]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801077.401]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801077.505]  -> wl_surface@3.frame(new id wl_callback@11)
+[801077.530]  -> wl_surface@3.commit()
+[801077.957] wl_buffer@10.release()
+[801093.408] wl_display@1.delete_id(11)
+[801093.507] wl_callback@11.done(23776923)
+[801094.008]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801094.053]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801094.132]  -> wl_surface@3.frame(new id wl_callback@11)
+[801094.157]  -> wl_surface@3.commit()
+[801094.492] wl_buffer@10.release()
+[801110.145] wl_display@1.delete_id(11)
+[801110.245] wl_callback@11.done(23776939)
+[801110.834]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801110.883]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801110.931]  -> wl_surface@3.frame(new id wl_callback@11)
+[801110.954]  -> wl_surface@3.commit()
+[801111.371] wl_buffer@10.release()
+[801126.776] wl_display@1.delete_id(11)
+[801126.877] wl_callback@11.done(23776956)
+[801127.463]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801127.516]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801127.563]  -> wl_surface@3.frame(new id wl_callback@11)
+[801127.587]  -> wl_surface@3.commit()
+[801127.935] wl_buffer@10.release()
+[801143.473] wl_display@1.delete_id(11)
+[801143.568] wl_callback@11.done(23776973)
+[801144.066]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801144.145]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801144.194]  -> wl_surface@3.frame(new id wl_callback@11)
+[801144.217]  -> wl_surface@3.commit()
+[801144.627] wl_buffer@10.release()
+[801160.131] wl_display@1.delete_id(11)
+[801160.230] wl_callback@11.done(23776989)
+[801160.814]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801160.868]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801160.915]  -> wl_surface@3.frame(new id wl_callback@11)
+[801160.938]  -> wl_surface@3.commit()
+[801161.280] wl_buffer@10.release()
+[801176.478] wl_display@1.delete_id(11)
+[801176.646] wl_callback@11.done(23777006)
+[801177.153]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801177.198]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801177.246]  -> wl_surface@3.frame(new id wl_callback@11)
+[801177.269]  -> wl_surface@3.commit()
+[801177.633] wl_buffer@10.release()
+[801193.388] wl_display@1.delete_id(11)
+[801193.490] wl_callback@11.done(23777023)
+[801194.053]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801194.132]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801194.181]  -> wl_surface@3.frame(new id wl_callback@11)
+[801194.204]  -> wl_surface@3.commit()
+[801194.542] wl_buffer@10.release()
+[801210.134] wl_display@1.delete_id(11)
+[801210.234] wl_callback@11.done(23777040)
+[801210.809]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801210.862]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801210.909]  -> wl_surface@3.frame(new id wl_callback@11)
+[801210.958]  -> wl_surface@3.commit()
+[801211.311] wl_buffer@10.release()
+[801226.822] wl_display@1.delete_id(11)
+[801226.923] wl_callback@11.done(23777056)
+[801227.509]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801227.563]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801227.611]  -> wl_surface@3.frame(new id wl_callback@11)
+[801227.635]  -> wl_surface@3.commit()
+[801228.050] wl_buffer@10.release()
+[801243.510] wl_display@1.delete_id(11)
+[801243.612] wl_callback@11.done(23777073)
+[801244.194]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801244.247]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801244.295]  -> wl_surface@3.frame(new id wl_callback@11)
+[801244.319]  -> wl_surface@3.commit()
+[801244.667] wl_buffer@10.release()
+[801260.136] wl_display@1.delete_id(11)
+[801260.238] wl_callback@11.done(23777090)
+[801260.824]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801260.877]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801260.926]  -> wl_surface@3.frame(new id wl_callback@11)
+[801260.949]  -> wl_surface@3.commit()
+[801261.288] wl_buffer@10.release()
+[801276.863] wl_display@1.delete_id(11)
+[801276.965] wl_callback@11.done(23777106)
+[801277.545]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801277.598]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801277.646]  -> wl_surface@3.frame(new id wl_callback@11)
+[801277.670]  -> wl_surface@3.commit()
+[801278.017] wl_buffer@10.release()
+[801293.455] wl_display@1.delete_id(11)
+[801293.557] wl_callback@11.done(23777123)
+[801294.143]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801294.196]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801294.243]  -> wl_surface@3.frame(new id wl_callback@11)
+[801294.267]  -> wl_surface@3.commit()
+[801294.678] wl_buffer@10.release()
+[801310.243] wl_display@1.delete_id(11)
+[801310.343] wl_callback@11.done(23777140)
+[801310.934]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801310.983]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801311.031]  -> wl_surface@3.frame(new id wl_callback@11)
+[801311.055]  -> wl_surface@3.commit()
+[801311.467] wl_buffer@10.release()
+[801326.946] wl_display@1.delete_id(11)
+[801327.027] wl_callback@11.done(23777156)
+[801327.561]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801327.610]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801327.658]  -> wl_surface@3.frame(new id wl_callback@11)
+[801327.682]  -> wl_surface@3.commit()
+[801328.087] wl_buffer@10.release()
+[801343.659] wl_display@1.delete_id(11)
+[801343.727] wl_callback@11.done(23777173)
+[801344.279]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801344.330]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801344.377]  -> wl_surface@3.frame(new id wl_callback@11)
+[801344.401]  -> wl_surface@3.commit()
+[801344.824] wl_buffer@10.release()
+[801360.236] wl_display@1.delete_id(11)
+[801360.335] wl_callback@11.done(23777190)
+[801360.905]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801360.956]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801361.004]  -> wl_surface@3.frame(new id wl_callback@11)
+[801361.028]  -> wl_surface@3.commit()
+[801361.441] wl_buffer@10.release()
+[801376.874] wl_display@1.delete_id(11)
+[801376.970] wl_callback@11.done(23777206)
+[801377.530]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801377.579]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801377.628]  -> wl_surface@3.frame(new id wl_callback@11)
+[801377.652]  -> wl_surface@3.commit()
+[801378.068] wl_buffer@10.release()
+[801393.577] wl_display@1.delete_id(11)
+[801393.678] wl_callback@11.done(23777223)
+[801394.268]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801394.320]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801394.368]  -> wl_surface@3.frame(new id wl_callback@11)
+[801394.392]  -> wl_surface@3.commit()
+[801394.802] wl_buffer@10.release()
+[801410.282] wl_display@1.delete_id(11)
+[801410.382] wl_callback@11.done(23777240)
+[801410.966]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801411.016]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801411.063]  -> wl_surface@3.frame(new id wl_callback@11)
+[801411.087]  -> wl_surface@3.commit()
+[801411.425] wl_buffer@10.release()
+[801426.941] wl_display@1.delete_id(11)
+[801427.036] wl_callback@11.done(23777256)
+[801427.642]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801427.693]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801427.741]  -> wl_surface@3.frame(new id wl_callback@11)
+[801427.765]  -> wl_surface@3.commit()
+[801428.091] wl_buffer@10.release()
+[801443.638] wl_display@1.delete_id(11)
+[801443.735] wl_callback@11.done(23777273)
+[801444.324]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801444.374]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801444.422]  -> wl_surface@3.frame(new id wl_callback@11)
+[801444.446]  -> wl_surface@3.commit()
+[801444.848] wl_buffer@10.release()
+[801460.309] wl_display@1.delete_id(11)
+[801460.407] wl_callback@11.done(23777290)
+[801460.989]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801461.039]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801461.086]  -> wl_surface@3.frame(new id wl_callback@11)
+[801461.110]  -> wl_surface@3.commit()
+[801461.447] wl_buffer@10.release()
+[801477.006] wl_display@1.delete_id(11)
+[801477.081] wl_callback@11.done(23777306)
+[801477.609]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801477.658]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801477.705]  -> wl_surface@3.frame(new id wl_callback@11)
+[801477.730]  -> wl_surface@3.commit()
+[801478.151] wl_buffer@10.release()
+[801493.639] wl_display@1.delete_id(11)
+[801493.735] wl_callback@11.done(23777323)
+[801494.294]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801494.345]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801494.392]  -> wl_surface@3.frame(new id wl_callback@11)
+[801494.416]  -> wl_surface@3.commit()
+[801494.830] wl_buffer@10.release()
+[801510.302] wl_display@1.delete_id(11)
+[801510.404] wl_callback@11.done(23777340)
+[801510.975]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801511.026]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801511.073]  -> wl_surface@3.frame(new id wl_callback@11)
+[801511.097]  -> wl_surface@3.commit()
+[801511.509] wl_buffer@10.release()
+[801526.968] wl_display@1.delete_id(11)
+[801527.071] wl_callback@11.done(23777356)
+[801527.625]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801527.675]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801527.723]  -> wl_surface@3.frame(new id wl_callback@11)
+[801527.747]  -> wl_surface@3.commit()
+[801528.160] wl_buffer@10.release()
+[801543.693] wl_display@1.delete_id(11)
+[801543.789] wl_callback@11.done(23777373)
+[801544.379]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801544.429]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801544.477]  -> wl_surface@3.frame(new id wl_callback@11)
+[801544.500]  -> wl_surface@3.commit()
+[801544.900] wl_buffer@10.release()
+[801560.353] wl_display@1.delete_id(11)
+[801560.451] wl_callback@11.done(23777390)
+[801561.036]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801561.086]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801561.134]  -> wl_surface@3.frame(new id wl_callback@11)
+[801561.158]  -> wl_surface@3.commit()
+[801561.484] wl_buffer@10.release()
+[801577.028] wl_display@1.delete_id(11)
+[801577.178] wl_callback@11.done(23777406)
+[801577.714]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801577.764]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801577.812]  -> wl_surface@3.frame(new id wl_callback@11)
+[801577.835]  -> wl_surface@3.commit()
+[801578.163] wl_buffer@10.release()
+[801593.714] wl_display@1.delete_id(11)
+[801593.807] wl_callback@11.done(23777423)
+[801594.398]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801594.448]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801594.496]  -> wl_surface@3.frame(new id wl_callback@11)
+[801594.520]  -> wl_surface@3.commit()
+[801594.930] wl_buffer@10.release()
+[801610.377] wl_display@1.delete_id(11)
+[801610.465] wl_callback@11.done(23777440)
+[801611.035]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801611.087]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801611.135]  -> wl_surface@3.frame(new id wl_callback@11)
+[801611.159]  -> wl_surface@3.commit()
+[801611.584] wl_buffer@10.release()
+
+gbm_create_device successful
+format supported
+gbm_surface_create successful
+
+eglGetPlatformDisplay successful
+eglInitialize successful (EGL 1.4)
+eglBindAPI successful
+EGLConfig matching: 1 (requested: 1)
+eglCreateContext successful
+eglCreatePlatformWindowSurface successful
+eglMakeCurrent successful (context binding)
+[800254.810] done drawing
+[800272.346] VBLANK
+[800275.958] done drawing
+[800289.131] VBLANK
+[800292.720] done drawing
+[800305.807] VBLANK
+[800309.346] done drawing
+[800322.514] VBLANK
+[800326.047] done drawing
+[800339.193] VBLANK
+[800342.733] done drawing
+[800355.838] VBLANK
+[800359.372] done drawing
+[800372.541] VBLANK
+[800375.993] done drawing
+[800389.182] VBLANK
+[800392.754] done drawing
+[800405.842] VBLANK
+[800409.409] done drawing
+[800422.546] VBLANK
+[800426.111] done drawing
+[800439.219] VBLANK
+[800442.763] done drawing
+[800455.860] VBLANK
+[800459.404] done drawing
+[800472.569] VBLANK
+[800476.103] done drawing
+[800489.245] VBLANK
+[800492.792] done drawing
+[800505.883] VBLANK
+[800509.419] done drawing
+[800522.599] VBLANK
+[800526.142] done drawing
+[800539.270] VBLANK
+[800542.817] done drawing
+[800555.903] VBLANK
+[800559.444] done drawing
+[800572.619] VBLANK
+[800576.163] done drawing
+[800589.279] VBLANK
+[800592.824] done drawing
+[800605.946] VBLANK
+[800609.484] done drawing
+[800622.644] VBLANK
+[800626.183] done drawing
+[800639.305] VBLANK
+[800642.845] done drawing
+[800655.961] VBLANK
+[800659.504] done drawing
+[800672.666] VBLANK
+[800676.209] done drawing
+[800689.328] VBLANK
+[800692.877] done drawing
+[800706.007] VBLANK
+[800709.541] done drawing
+[800722.675] VBLANK
+[800726.222] done drawing
+[800739.337] VBLANK
+[800742.876] done drawing
+[800756.038] VBLANK
+[800759.571] done drawing
+[800772.698] VBLANK
+[800776.243] done drawing
+[800789.356] VBLANK
+[800792.896] done drawing
+[800806.060] VBLANK
+[800809.603] done drawing
+[800822.722] VBLANK
+[800826.270] done drawing
+[800839.377] VBLANK
+[800842.919] done drawing
+[800856.098] VBLANK
+[800859.637] done drawing
+[800872.742] VBLANK
+[800876.314] done drawing
+[800889.391] VBLANK
+[800892.958] done drawing
+[800906.100] VBLANK
+[800909.662] done drawing
+[800922.778] VBLANK
+[800926.319] done drawing
+[800939.429] VBLANK
+[800942.991] done drawing
+[800956.126] VBLANK
+[800959.686] done drawing
+[800972.785] VBLANK
+[800976.328] done drawing
+[800989.438] VBLANK
+[800993.011] done drawing
+[801006.146] VBLANK
+[801009.716] done drawing
+[801022.826] VBLANK
+[801026.384] done drawing
+[801039.460] VBLANK
+[801043.029] done drawing
+[801056.170] VBLANK
+[801059.729] done drawing
+[801072.807] VBLANK
+[801076.371] done drawing
+[801089.499] VBLANK
+[801093.064] done drawing
+[801106.208] VBLANK
+[801109.752] done drawing
+[801122.869] VBLANK
+[801126.435] done drawing
+[801139.515] VBLANK
+[801143.082] done drawing
+[801156.217] VBLANK
+[801159.784] done drawing
+[801172.736] VBLANK
+[801176.092] done drawing
+[801189.477] VBLANK
+[801193.043] done drawing
+[801206.212] VBLANK
+[801209.777] done drawing
+[801222.914] VBLANK
+[801226.456] done drawing
+[801239.591] VBLANK
+[801243.163] done drawing
+[801256.235] VBLANK
+[801259.802] done drawing
+[801272.931] VBLANK
+[801276.501] done drawing
+[801289.551] VBLANK
+[801293.097] done drawing
+[801306.297] VBLANK
+[801309.836] done drawing
+[801322.947] VBLANK
+[801326.517] done drawing
+[801339.635] VBLANK
+[801343.198] done drawing
+[801356.309] VBLANK
+[801359.877] done drawing
+[801372.946] VBLANK
+[801376.508] done drawing
+[801389.661] VBLANK
+[801393.207] done drawing
+[801406.331] VBLANK
+[801409.902] done drawing
+[801422.980] VBLANK
+[801426.545] done drawing
+[801439.684] VBLANK
+[801443.230] done drawing
+[801456.352] VBLANK
+[801459.918] done drawing
+[801472.990] VBLANK
+[801476.564] done drawing
+[801489.703] VBLANK
+[801493.269] done drawing
+[801506.374] VBLANK
+[801509.930] done drawing
+[801523.029] VBLANK
+[801526.598] done drawing
+[801539.727] VBLANK
+[801543.273] done drawing
+[801556.387] VBLANK
+[801559.959] done drawing
+[801573.062] VBLANK
+[801576.632] done drawing
+[801589.752] VBLANK
+[801593.298] done drawing
+[801606.397] VBLANK
+[801609.964] done drawing
+[801623.081] VBLANK
+[8016[801627.150] wl_display@1.delete_id(11)
+[801627.203] wl_callback@11.done(23777456)
+[801627.746]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801627.796]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801627.843]  -> wl_surface@3.frame(new id wl_callback@11)
+[801627.890]  -> wl_surface@3.commit()
+[801628.294] wl_buffer@10.release()
+[801643.744] wl_display@1.delete_id(11)
+[801643.896] wl_callback@11.done(23777473)
+[801644.424]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801644.473]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801644.521]  -> wl_surface@3.frame(new id wl_callback@11)
+[801644.545]  -> wl_surface@3.commit()
+[801644.948] wl_buffer@10.release()
+[801660.413] wl_display@1.delete_id(11)
+[801660.561] wl_callback@11.done(23777490)
+[801661.096]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801661.145]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801661.193]  -> wl_surface@3.frame(new id wl_callback@11)
+[801661.217]  -> wl_surface@3.commit()
+[801661.564] wl_buffer@10.release()
+[801677.011] wl_display@1.delete_id(11)
+[801677.112] wl_callback@11.done(23777506)
+[801677.696]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801677.750]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801677.798]  -> wl_surface@3.frame(new id wl_callback@11)
+[801677.822]  -> wl_surface@3.commit()
+[801678.165] wl_buffer@10.release()
+[801693.743] wl_display@1.delete_id(11)
+[801693.841] wl_callback@11.done(23777523)
+[801694.425]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801694.476]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801694.524]  -> wl_surface@3.frame(new id wl_callback@11)
+[801694.549]  -> wl_surface@3.commit()
+[801694.900] wl_buffer@10.release()
+[801710.435] wl_display@1.delete_id(11)
+[801710.588] wl_callback@11.done(23777540)
+[801711.120]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801711.170]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801711.218]  -> wl_surface@3.frame(new id wl_callback@11)
+[801711.241]  -> wl_surface@3.commit()
+[801711.642] wl_buffer@10.release()
+[801727.137] wl_display@1.delete_id(11)
+[801727.288] wl_callback@11.done(23777556)
+[801727.810]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801727.859]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801727.907]  -> wl_surface@3.frame(new id wl_callback@11)
+[801727.931]  -> wl_surface@3.commit()
+[801728.334] wl_buffer@10.release()
+[801743.833] wl_display@1.delete_id(11)
+[801743.901] wl_callback@11.done(23777573)
+[801744.490]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801744.542]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801744.590]  -> wl_surface@3.frame(new id wl_callback@11)
+[801744.614]  -> wl_surface@3.commit()
+[801745.025] wl_buffer@10.release()
+[801760.444] wl_display@1.delete_id(11)
+[801760.541] wl_callback@11.done(23777590)
+[801761.098]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801761.148]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801761.196]  -> wl_surface@3.frame(new id wl_callback@11)
+[801761.220]  -> wl_surface@3.commit()
+[801761.634] wl_buffer@10.release()
+[801777.196] wl_display@1.delete_id(11)
+[801777.259] wl_callback@11.done(23777606)
+[801777.827]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801777.878]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801777.925]  -> wl_surface@3.frame(new id wl_callback@11)
+[801777.949]  -> wl_surface@3.commit()
+[801778.351] wl_buffer@10.release()
+[801793.791] wl_display@1.delete_id(11)
+[801793.877] wl_callback@11.done(23777623)
+[801794.431]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801794.482]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801794.530]  -> wl_surface@3.frame(new id wl_callback@11)
+[801794.554]  -> wl_surface@3.commit()
+[801794.956] wl_buffer@10.release()
+[801810.493] wl_display@1.delete_id(11)
+[801810.644] wl_callback@11.done(23777640)
+[801811.179]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801811.229]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801811.277]  -> wl_surface@3.frame(new id wl_callback@11)
+[801811.300]  -> wl_surface@3.commit()
+[801811.703] wl_buffer@10.release()
+[801827.169] wl_display@1.delete_id(11)
+[801827.318] wl_callback@11.done(23777656)
+[801827.847]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801827.897]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801827.945]  -> wl_surface@3.frame(new id wl_callback@11)
+[801827.968]  -> wl_surface@3.commit()
+[801828.302] wl_buffer@10.release()
+[801843.813] wl_display@1.delete_id(11)
+[801843.986] wl_callback@11.done(23777673)
+[801844.512]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801844.563]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801844.611]  -> wl_surface@3.frame(new id wl_callback@11)
+[801844.634]  -> wl_surface@3.commit()
+[801844.973] wl_buffer@10.release()
+[801860.475] wl_display@1.delete_id(11)
+[801860.573] wl_callback@11.done(23777690)
+[801861.158]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801861.208]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801861.257]  -> wl_surface@3.frame(new id wl_callback@11)
+[801861.280]  -> wl_surface@3.commit()
+[801861.693] wl_buffer@10.release()
+[801877.186] wl_display@1.delete_id(11)
+[801877.336] wl_callback@11.done(23777706)
+[801877.861]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801877.910]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801877.958]  -> wl_surface@3.frame(new id wl_callback@11)
+[801877.983]  -> wl_surface@3.commit()
+[801878.323] wl_buffer@10.release()
+[801893.816] wl_display@1.delete_id(11)
+[801893.970] wl_callback@11.done(23777723)
+[801894.500]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801894.550]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801894.598]  -> wl_surface@3.frame(new id wl_callback@11)
+[801894.622]  -> wl_surface@3.commit()
+[801894.949] wl_buffer@10.release()
+[801910.558] wl_display@1.delete_id(11)
+[801910.697] wl_callback@11.done(23777740)
+[801911.225]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801911.275]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801911.323]  -> wl_surface@3.frame(new id wl_callback@11)
+[801911.347]  -> wl_surface@3.commit()
+[801911.673] wl_buffer@10.release()
+[801927.203] wl_display@1.delete_id(11)
+[801927.353] wl_callback@11.done(23777757)
+[801927.882]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801927.931]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801927.979]  -> wl_surface@3.frame(new id wl_callback@11)
+[801928.003]  -> wl_surface@3.commit()
+[801928.412] wl_buffer@10.release()
+[801943.921] wl_display@1.delete_id(11)
+[801944.064] wl_callback@11.done(23777773)
+[801944.589]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801944.638]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801944.686]  -> wl_surface@3.frame(new id wl_callback@11)
+[801944.709]  -> wl_surface@3.commit()
+[801945.111] wl_buffer@10.release()
+[801960.563] wl_display@1.delete_id(11)
+[801960.711] wl_callback@11.done(23777790)
+[801961.236]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801961.286]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801961.334]  -> wl_surface@3.frame(new id wl_callback@11)
+[801961.358]  -> wl_surface@3.commit()
+[801961.689] wl_buffer@10.release()
+[801977.259] wl_display@1.delete_id(11)
+[801977.397] wl_callback@11.done(23777807)
+[801977.925]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801977.975]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801978.023]  -> wl_surface@3.frame(new id wl_callback@11)
+[801978.047]  -> wl_surface@3.commit()
+[801978.375] wl_buffer@10.release()
+[801993.915] wl_display@1.delete_id(11)
+[801994.065] wl_callback@11.done(23777823)
+[801994.586]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[801994.635]  -> wl_surface@3.damage(20, 20, 210, 210)
+[801994.683]  -> wl_surface@3.frame(new id wl_callback@11)
+[801994.707]  -> wl_surface@3.commit()
+[801995.117] wl_buffer@10.release()
+[802010.579] wl_display@1.delete_id(11)
+[802010.731] wl_callback@11.done(23777840)
+[802011.268]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802011.314]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802011.362]  -> wl_surface@3.frame(new id wl_callback@11)
+[802011.386]  -> wl_surface@3.commit()
+[802011.806] wl_buffer@10.release()
+[802027.298] wl_display@1.delete_id(11)
+[802027.365] wl_callback@11.done(23777857)
+[802027.906]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802027.956]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802028.004]  -> wl_surface@3.frame(new id wl_callback@11)
+[802028.028]  -> wl_surface@3.commit()
+[802028.431] wl_buffer@10.release()
+[802043.978] wl_display@1.delete_id(11)
+[802044.050] wl_callback@11.done(23777873)
+[802044.604]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802044.655]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802044.723]  -> wl_surface@3.frame(new id wl_callback@11)
+[802044.748]  -> wl_surface@3.commit()
+[802045.152] wl_buffer@10.release()
+[802060.616] wl_display@1.delete_id(11)
+[802060.784] wl_callback@11.done(23777890)
+[802061.287]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802061.333]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802061.382]  -> wl_surface@3.frame(new id wl_callback@11)
+[802061.405]  -> wl_surface@3.commit()
+[802061.806] wl_buffer@10.release()
+[802077.322] wl_display@1.delete_id(11)
+[802077.485] wl_callback@11.done(23777907)
+[802077.984]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802078.031]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802078.079]  -> wl_surface@3.frame(new id wl_callback@11)
+[802078.102]  -> wl_surface@3.commit()
+[802078.521] wl_buffer@10.release()
+[802093.949] wl_display@1.delete_id(11)
+[802094.126] wl_callback@11.done(23777923)
+[802094.632]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802094.678]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802094.725]  -> wl_surface@3.frame(new id wl_callback@11)
+[802094.749]  -> wl_surface@3.commit()
+[802095.075] wl_buffer@10.release()
+[802110.666] wl_display@1.delete_id(11)
+[802110.828] wl_callback@11.done(23777940)
+[802111.335]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802111.382]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802111.430]  -> wl_surface@3.frame(new id wl_callback@11)
+[802111.454]  -> wl_surface@3.commit()
+[802111.783] wl_buffer@10.release()
+[802127.313] wl_display@1.delete_id(11)
+[802127.482] wl_callback@11.done(23777957)
+[802127.984]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802128.030]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802128.078]  -> wl_surface@3.frame(new id wl_callback@11)
+[802128.102]  -> wl_surface@3.commit()
+[802128.524] wl_buffer@10.release()
+[802144.020] wl_display@1.delete_id(11)
+[802144.186] wl_callback@11.done(23777973)
+[802144.686]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802144.732]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802144.780]  -> wl_surface@3.frame(new id wl_callback@11)
+[802144.804]  -> wl_surface@3.commit()
+[802145.206] wl_buffer@10.release()
+[802160.694] wl_display@1.delete_id(11)
+[802160.786] wl_callback@11.done(23777990)
+[802161.288]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802161.334]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802161.382]  -> wl_surface@3.frame(new id wl_callback@11)
+[802161.406]  -> wl_surface@3.commit()
+[802161.828] wl_buffer@10.release()
+[802177.396] wl_display@1.delete_id(11)
+[802177.553] wl_callback@11.done(23778007)
+[802178.061]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802178.109]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802178.157]  -> wl_surface@3.frame(new id wl_callback@11)
+[802178.181]  -> wl_surface@3.commit()
+[802178.527] wl_buffer@10.release()
+[802193.924] wl_display@1.delete_id(11)
+[802194.067] wl_callback@11.done(23778023)
+[802194.594]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802194.643]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802194.690]  -> wl_surface@3.frame(new id wl_callback@11)
+[802194.714]  -> wl_surface@3.commit()
+[802195.124] wl_buffer@10.release()
+[802210.863] wl_display@1.delete_id(11)
+[802210.920] wl_callback@11.done(23778040)
+[802211.418]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802211.464]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802211.512]  -> wl_surface@3.frame(new id wl_callback@11)
+[802211.536]  -> wl_surface@3.commit()
+[802211.937] wl_buffer@10.release()
+[802227.353] wl_display@1.delete_id(11)
+[802227.529] wl_callback@11.done(23778057)
+[802228.033]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802228.079]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802228.127]  -> wl_surface@3.frame(new id wl_callback@11)
+[802228.151]  -> wl_surface@3.commit()
+[802228.477] wl_buffer@10.release()
+[802244.061] wl_display@1.delete_id(11)
+[802244.207] wl_callback@11.done(23778073)
+[802244.713]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802244.759]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802244.807]  -> wl_surface@3.frame(new id wl_callback@11)
+[802244.831]  -> wl_surface@3.commit()
+[802245.158] wl_buffer@10.release()
+[802260.696] wl_display@1.delete_id(11)
+[802260.892] wl_callback@11.done(23778090)
+[802261.395]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802261.442]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802261.489]  -> wl_surface@3.frame(new id wl_callback@11)
+[802261.513]  -> wl_surface@3.commit()
+[802261.910] wl_buffer@10.release()
+[802277.455] wl_display@1.delete_id(11)
+[802277.575] wl_callback@11.done(23778107)
+[802278.080]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802278.126]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802278.174]  -> wl_surface@3.frame(new id wl_callback@11)
+[802278.198]  -> wl_surface@3.commit()
+[802278.598] wl_buffer@10.release()
+[802294.126] wl_display@1.delete_id(11)
+[802294.185] wl_callback@11.done(23778123)
+[802294.680]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802294.726]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802294.774]  -> wl_surface@3.frame(new id wl_callback@11)
+[802294.798]  -> wl_surface@3.commit()
+[802295.210] wl_buffer@10.release()
+[802310.806] wl_display@1.delete_id(11)
+[802310.870] wl_callback@11.done(23778140)
+[802311.381]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802311.428]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802311.476]  -> wl_surface@3.frame(new id wl_callback@11)
+[802311.500]  -> wl_surface@3.commit()
+[802311.904] wl_buffer@10.release()
+[802327.410] wl_display@1.delete_id(11)
+[802327.531] wl_callback@11.done(23778157)
+[802328.052]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802328.099]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802328.147]  -> wl_surface@3.frame(new id wl_callback@11)
+[802328.171]  -> wl_surface@3.commit()
+[802328.572] wl_buffer@10.release()
+[802344.070] wl_display@1.delete_id(11)
+[802344.225] wl_callback@11.done(23778173)
+[802344.725]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802344.770]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802344.818]  -> wl_surface@3.frame(new id wl_callback@11)
+[802344.842]  -> wl_surface@3.commit()
+[802345.237] wl_buffer@10.release()
+[802360.811] wl_display@1.delete_id(11)
+[802360.924] wl_callback@11.done(23778190)
+[802361.430]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802361.476]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802361.525]  -> wl_surface@3.frame(new id wl_callback@11)
+[802361.548]  -> wl_surface@3.commit()
+[802361.886] wl_buffer@10.release()
+[802377.480] wl_display@1.delete_id(11)
+[802377.599] wl_callback@11.done(23778207)
+[802378.102]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802378.149]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802378.197]  -> wl_surface@3.frame(new id wl_callback@11)
+[802378.221]  -> wl_surface@3.commit()
+[802378.547] wl_buffer@10.release()
+[802394.126] wl_display@1.delete_id(11)
+[802394.247] wl_callback@11.done(23778223)
+[802394.751]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802394.797]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802394.844]  -> wl_surface@3.frame(new id wl_callback@11)
+[802394.868]  -> wl_surface@3.commit()
+[802395.266] wl_buffer@10.release()
+[802410.841] wl_display@1.delete_id(11)
+[802410.953] wl_callback@11.done(23778240)
+[802411.457]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802411.502]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802411.551]  -> wl_surface@3.frame(new id wl_callback@11)
+[802411.574]  -> wl_surface@3.commit()
+[802411.937] wl_buffer@10.release()
+[802427.484] wl_display@1.delete_id(11)
+[802427.607] wl_callback@11.done(23778257)
+[802428.108]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802428.154]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802428.202]  -> wl_surface@3.frame(new id wl_callback@11)
+[802428.225]  -> wl_surface@3.commit()
+[802428.563] wl_buffer@10.release()
+[802444.142] wl_display@1.delete_id(11)
+[802444.275] wl_callback@11.done(23778273)
+[802444.784]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802444.830]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802444.878]  -> wl_surface@3.frame(new id wl_callback@11)
+[802444.902]  -> wl_surface@3.commit()
+[802445.317] wl_buffer@10.release()
+[802460.824] wl_display@1.delete_id(11)
+[802460.955] wl_callback@11.done(23778290)
+[802461.463]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802461.509]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802461.581]  -> wl_surface@3.frame(new id wl_callback@11)
+[802461.605]  -> wl_surface@3.commit()
+[802461.947] wl_buffer@10.release()
+[802477.519] wl_display@1.delete_id(11)
+[802477.637] wl_callback@11.done(23778307)
+[802478.139]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802478.185]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802478.233]  -> wl_surface@3.frame(new id wl_callback@11)
+[802478.256]  -> wl_surface@3.commit()
+[802478.586] wl_buffer@10.release()
+[802494.174] wl_display@1.delete_id(11)
+[802494.299] wl_callback@11.done(23778323)
+[802494.807]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802494.853]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802494.902]  -> wl_surface@3.frame(new id wl_callback@11)
+[802494.925]  -> wl_surface@3.commit()
+[802495.253] wl_buffer@10.release()
+[802510.951] wl_display@1.delete_id(11)
+[802511.010] wl_callback@11.done(23778340)
+[802511.514]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802511.561]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802511.609]  -> wl_surface@3.frame(new id wl_callback@11)
+[802511.633]  -> wl_surface@3.commit()
+[802511.961] wl_buffer@10.release()
+[802527.524] wl_display@1.delete_id(11)
+[802527.657] wl_callback@11.done(23778357)
+[802528.158]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802528.204]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802528.251]  -> wl_surface@3.frame(new id wl_callback@11)
+[802528.275]  -> wl_surface@3.commit()
+[802528.601] wl_buffer@10.release()
+[802544.260] wl_display@1.delete_id(11)
+[802544.317] wl_callback@11.done(23778373)
+[802544.819]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802544.864]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802544.913]  -> wl_surface@3.frame(new id wl_callback@11)
+[802544.936]  -> wl_surface@3.commit()
+[802545.280] wl_buffer@10.release()
+[802560.992] wl_display@1.delete_id(11)
+[802561.050] wl_callback@11.done(23778390)
+[802561.554]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802561.600]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802561.648]  -> wl_surface@3.frame(new id wl_callback@11)
+[802561.671]  -> wl_surface@3.commit()
+[802562.068] wl_buffer@10.release()
+[802577.569] wl_display@1.delete_id(11)
+[802577.641] wl_callback@11.done(23778407)
+[802578.209]  -> wl_surface@3.attach(wl_buffer@10, 0, 0)
+[802578.258]  -> wl_surface@3.damage(20, 20, 210, 210)
+[802578.306]  -> wl_surface@3.frame(new id wl_callback@11)
+[802578.330]  -> wl_surface@3.commit()
+26.652] done drawing
+[801639.776] VBLANK
+[801643.320] done drawing
+[801656.435] VBLANK
+[801659.999] done drawing
+[801673.093] VBLANK
+[801676.659] done drawing
+[801689.787] VBLANK
+[801693.351] done drawing
+[801706.469] VBLANK
+[801710.010] done drawing
+[801723.155] VBLANK
+[801726.709] done drawing
+[801739.817] VBLANK
+[801743.383] done drawing
+[801756.491] VBLANK
+[801760.056] done drawing
+[801773.160] VBLANK
+[801776.727] done drawing
+[801789.803] VBLANK
+[801793.369] done drawing
+[801806.522] VBLANK
+[801810.066] done drawing
+[801823.189] VBLANK
+[801826.754] done drawing
+[801839.836] VBLANK
+[801843.404] done drawing
+[801856.536] VBLANK
+[801860.091] done drawing
+[801873.209] VBLANK
+[801876.776] done drawing
+[801889.848] VBLANK
+[801893.414] done drawing
+[801906.560] VBLANK
+[801910.123] done drawing
+[801923.234] VBLANK
+[801926.773] done drawing
+[801939.921] VBLANK
+[801943.479] done drawing
+[801956.582] VBLANK
+[801960.152] done drawing
+[801973.253] VBLANK
+[801976.819] done drawing
+[801989.937] VBLANK
+[801993.482] done drawing
+[802006.618] VBLANK
+[802010.159] done drawing
+[802023.281] VBLANK
+[802026.843] done drawing
+[802039.957] VBLANK
+[802043.525] done drawing
+[802056.620] VBLANK
+[802060.169] done drawing
+[802073.318] VBLANK
+[802076.861] done drawing
+[802089.979] VBLANK
+[802093.547] done drawing
+[802106.652] VBLANK
+[802110.219] done drawing
+[802123.317] VBLANK
+[802126.864] done drawing
+[802140.017] VBLANK
+[802143.555] done drawing
+[802156.665] VBLANK
+[802160.235] done drawing
+[802173.353] VBLANK
+[802176.919] done drawing
+[802190.029] VBLANK
+[802193.482] done drawing
+[802206.716] VBLANK
+[802210.257] done drawing
+[802223.373] VBLANK
+[802226.936] done drawing
+[802240.041] VBLANK
+[802243.605] done drawing
+[802256.712] VBLANK
+[802260.252] done drawing
+[802273.409] VBLANK
+[802276.955] done drawing
+[802290.061] VBLANK
+[802293.627] done drawing
+[802306.745] VBLANK
+[802310.310] done drawing
+[802323.410] VBLANK
+[802326.977] done drawing
+[802340.069] VBLANK
+[802343.618] done drawing
+[802356.770] VBLANK
+[802360.333] done drawing
+[802373.433] VBLANK
+[802377.000] done drawing
+[802390.095] VBLANK
+[802393.647] done drawing
+[802406.794] VBLANK
+[802410.361] done drawing
+[802423.465] VBLANK
+[802427.029] done drawing
+[802440.130] VBLANK
+[802443.683] done drawing
+[802456.816] VBLANK
+[802460.384] done drawing
+[802473.478] VBLANK
+[802477.050] done drawing
+[802490.147] VBLANK
+[802493.719] done drawing
+[802506.835] VBLANK
+[802510.401] done drawing
+[802523.502] VBLANK
+[802527.070] done drawing
+[802540.158] VBLANK
+[802543.719] done drawing
+[802556.868] VBLANK
+[802560.409] done drawing
+[802573.536] VBLANK
+[802577.020] done drawing
+simple-shm exiting
+[802614.337]  -> wl_buffer@10.destroy()
+[802614.367]  -> zxdg_toplevel_v6@8.destroy()
+[802614.382]  -> zxdg_surface_v6@7.destroy()
+[802614.396]  -> wl_surface@3.destroy()
+[802614.409]  -> zxdg_shell_v6@6.destroy()

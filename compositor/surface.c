@@ -2,8 +2,10 @@
 #include "surface.h"
 #include <wayland-server-protocol.h>
 
-#include <stdio.h>
+#include "renderer.h"
+
 #include <stdlib.h>
+#include <stdio.h>
 
 static void surface_destroy(struct wl_client *client, struct wl_resource
 *resource) {
@@ -24,7 +26,8 @@ static void surface_damage(struct wl_client *client, struct wl_resource
 static void surface_frame(struct wl_client *client, struct wl_resource
 *resource, uint32_t callback) {
 	struct surface *surface = wl_resource_get_user_data(resource);
-	surface->frame = wl_resource_create(client, &wl_callback_interface, 1, callback);
+	if (!surface->frame)
+		surface->frame = wl_resource_create(client, &wl_callback_interface, 1, callback);
 }
 
 static void surface_set_opaque_region(struct wl_client *client, struct
@@ -42,6 +45,22 @@ static void surface_commit(struct wl_client *client, struct wl_resource
 	struct surface *surface = wl_resource_get_user_data(resource);
 	// apply all pending state
 	surface->current->buffer = surface->pending->buffer;
+
+	if (surface->current->buffer) {
+		// delete the current texture, we don't need it anymore because we have
+		// received an updated buffer and we have to make a new texture
+		renderer_delete_tex(surface->texture);
+
+		// make a texture from the new buffer
+		struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(surface->current->buffer);
+		uint32_t width = wl_shm_buffer_get_width(shm_buffer);
+		uint32_t height = wl_shm_buffer_get_height(shm_buffer);
+		uint8_t *data = wl_shm_buffer_get_data(shm_buffer);
+		surface->texture = renderer_tex_from_data(width, height, data);
+
+		// we can free the buffer memory because we have a copy in texture form
+		wl_buffer_send_release(surface->current->buffer);
+	}
 }
 
 static void surface_set_buffer_transform(struct wl_client *client, struct
@@ -79,9 +98,10 @@ void surface_free(struct wl_resource *resource) {
 	free(surface);
 }
 
-void surface_new(struct wl_resource *resource) {
+struct surface *surface_new(struct wl_resource *resource) {
 	struct surface *surface = calloc(1, sizeof(struct surface));
 	surface->current = calloc(1, sizeof(struct surface_state));
 	surface->pending = calloc(1, sizeof(struct surface_state));
 	wl_resource_set_implementation(resource, &impl, surface, surface_free);
+	return surface;
 }

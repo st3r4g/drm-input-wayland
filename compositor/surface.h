@@ -6,7 +6,10 @@ struct surface_state {
 
 struct surface {
 	struct surface_state *current, *pending;
+	struct texture *texture;
 	struct wl_resource *frame;
+
+	struct wl_list link;
 };
 
-void surface_new(struct wl_resource *resource);
+struct surface *surface_new(struct wl_resource *resource);

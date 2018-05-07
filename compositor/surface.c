@@ -2,6 +2,7 @@
 #include "surface.h"
 #include <wayland-server-protocol.h>
 
+#include "egl.h"
 #include "renderer.h"
 
 #include <stdlib.h>
@@ -46,20 +47,32 @@ static void surface_commit(struct wl_client *client, struct wl_resource
 	// apply all pending state
 	surface->current->buffer = surface->pending->buffer;
 
-	if (surface->current->buffer) {
-		// delete the current texture, we don't need it anymore because we have
-		// received an updated buffer and we have to make a new texture
+	struct wl_resource *buffer = surface->current->buffer;
+	struct egl *egl = surface->egl;
+	if (buffer) {
+		// delete the current texture, we don't need it anymore because
+		// we have received an updated buffer and we are going to make a
+		// new texture
 		renderer_delete_tex(surface->texture);
 
 		// make a texture from the new buffer
-		struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(surface->current->buffer);
-		uint32_t width = wl_shm_buffer_get_width(shm_buffer);
-		uint32_t height = wl_shm_buffer_get_height(shm_buffer);
-		uint8_t *data = wl_shm_buffer_get_data(shm_buffer);
-		surface->texture = renderer_tex_from_data(width, height, data);
+		if (egl_wl_buffer_has_egl(egl, buffer)) {
+			EGLint width, height;
+			EGLImage image = egl_create_image(egl, buffer, &width,
+			&height);
+			surface->texture = renderer_tex_from_egl_image(width,
+			height, image);
+			egl_destroy_image(egl, image);
+		} else {
+			struct wl_shm_buffer *shm_buffer = wl_shm_buffer_get(buffer);
+			uint32_t width = wl_shm_buffer_get_width(shm_buffer);
+			uint32_t height = wl_shm_buffer_get_height(shm_buffer);
+			uint8_t *data = wl_shm_buffer_get_data(shm_buffer);
+			surface->texture = renderer_tex_from_data(width, height, data);
+		}
 
 		// we can free the buffer memory because we have a copy in texture form
-		wl_buffer_send_release(surface->current->buffer);
+		wl_buffer_send_release(buffer);
 	}
 }
 
@@ -98,10 +111,11 @@ void surface_free(struct wl_resource *resource) {
 	free(surface);
 }
 
-struct surface *surface_new(struct wl_resource *resource) {
+struct surface *surface_new(struct wl_resource *resource, struct egl *egl) {
 	struct surface *surface = calloc(1, sizeof(struct surface));
 	surface->current = calloc(1, sizeof(struct surface_state));
 	surface->pending = calloc(1, sizeof(struct surface_state));
+	surface->egl = egl;
 	wl_resource_set_implementation(resource, &impl, surface, surface_free);
 	return surface;
 }

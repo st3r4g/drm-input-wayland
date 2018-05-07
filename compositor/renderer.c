@@ -5,6 +5,8 @@
 #include <GLES2/gl2ext.h>
 
 #include "algebra.h"
+#include "egl.h"
+#include "renderer.h"
 
 struct renderer {
 	GLuint program;
@@ -15,11 +17,15 @@ struct texture {
 	GLuint tex;
 };
 
+static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES = 0;
+
 GLuint CreateProgram(const char *name);
 char *GetShaderSource(const char *src_file);
 
 struct renderer *renderer_setup() {
 	struct renderer *renderer = calloc(1, sizeof(struct renderer));
+	glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)
+	eglGetProcAddress("glEGLImageTargetTexture2DOES");
 	renderer->program = CreateProgram("texture");
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 	return renderer;
@@ -29,8 +35,26 @@ void renderer_clear() {
 	glClear(GL_COLOR_BUFFER_BIT);
 }
 
+struct texture *renderer_tex(const int32_t width, const int32_t height);
+
 struct texture *renderer_tex_from_data(const int32_t width, const int32_t
 height, const void *data) {
+	struct texture *texture = renderer_tex(width, height);
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA_EXT,
+	GL_UNSIGNED_BYTE, data);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texture;
+}
+
+struct texture *renderer_tex_from_egl_image(const int32_t width, const int32_t
+height, EGLImage image) {
+	struct texture *texture = renderer_tex(width, height);
+	glEGLImageTargetTexture2DOES(GL_TEXTURE_2D, image);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	return texture;
+}
+
+struct texture *renderer_tex(const int32_t width, const int32_t height) {
 	struct texture *texture = calloc(1, sizeof(struct texture));
 	GLuint *vao = &texture->vao;
 	GLuint *tex = &texture->tex;
@@ -41,10 +65,10 @@ height, const void *data) {
 	glBindVertexArray(*vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	GLfloat rect[] = {
-		-0.08f, -0.08f, 0.0f, 0.0f, // left bottom
-		+0.08f, -0.08f, 1.0f, 0.0f, // right bottom
-		-0.08f, +0.08f, 0.0f, 1.0f, // left top
-		+0.08f, +0.08f, 1.0f, 1.0f, // right top
+		-0.5f, -0.5f, 0.0f, 0.0f, // left bottom
+		+0.5f, -0.5f, 1.0f, 0.0f, // right bottom
+		-0.5f, +0.5f, 0.0f, 1.0f, // left top
+		+0.5f, +0.5f, 1.0f, 1.0f, // right top
 	};
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), 0);
@@ -58,9 +82,6 @@ height, const void *data) {
 	glBindTexture(GL_TEXTURE_2D, *tex);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_BGRA_EXT,
-	GL_UNSIGNED_BYTE, data);
-	glBindTexture(GL_TEXTURE_2D, 0);
 	return texture;
 }
 

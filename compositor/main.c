@@ -11,8 +11,6 @@
 #include <time.h>
 #include <unistd.h>
 
-#include <EGL/egl.h>
-#include <EGL/eglext.h>
 #include <gbm.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
@@ -22,6 +20,7 @@
 #include "protocols/xdg-shell-unstable-v6-server-protocol.h"
 
 #include "algebra.h"
+#include "egl.h"
 #include "renderer.h"
 
 #include "compositor.h"
@@ -46,33 +45,28 @@ struct backend {
 	int gpu_fd;
 	uint32_t plane_id;
 	uint32_t old_fb_id;
-	uint32_t fb_id;
+	uint32_t fb_id[2];
 	drmModeAtomicReq *req;
 
 	// GBM
 	struct gbm_device *gbm_device;
 	struct gbm_surface *gbm_surface;
+	struct gbm_bo *gbm_old_bo, *gbm_cur_bo;
 	struct gbm_bo *gbm_bo;
-
-	// EGL
-	EGLDisplay egl_display;
-	EGLContext egl_context;
-	EGLSurface egl_surface;
 };
 
 struct server {
 	struct backend *backend;
+	struct egl *egl;
 	struct renderer *renderer;
 	struct wl_list compositor_list;
 };
 
-int count = 0;
-
 void render(struct server *server) {
 	struct backend *B = server->backend;
+	struct egl *egl = server->egl;
 	struct renderer *R = server->renderer;
-//	printf("%d\n", ++count);
-	++count;
+	static int i = 0;
 
 /*	drmModeRes *res = drmModeGetResources(B->gpu_fd);
 	printf("%d\n", res->count_fbs);
@@ -80,10 +74,6 @@ void render(struct server *server) {
 		printf("%d\n", res->fbs[i]);
 	drmModeFreeResources(res);*/
 
-	// the gbm_buffer has to be released before we can draw on it
-	gbm_surface_release_buffer(B->gbm_surface, B->gbm_bo);
-
-	// RENDERING (ending with EGLSwapBuffers)
 	renderer_clear();
 	
 	struct compositor *compositor;
@@ -93,12 +83,12 @@ void render(struct server *server) {
 			renderer_tex_draw(R, surface->texture);
 		}
 	}
-	if (eglSwapBuffers(B->egl_display, B->egl_surface) == EGL_FALSE) {
-		fprintf(stderr, "eglSwapBuffers failed: %s\n",
-		GetError(eglGetError()));
+	if (egl_swap_buffers(egl) == EGL_FALSE) {
+		fprintf(stderr, "eglSwapBuffers failed\n");
 	}
 
-	// a locked buffer 
+	gbm_surface_release_buffer(B->gbm_surface, B->gbm_bo);
+
 	B->gbm_bo = gbm_surface_lock_front_buffer(B->gbm_surface);
 	if (!B->gbm_bo) printf("bad bo\n");
 
@@ -106,23 +96,26 @@ void render(struct server *server) {
 	unsigned int time;
 	clock_gettime(CLOCK_REALTIME, &tp);
 	time = (tp.tv_sec * 1000000L) + (tp.tv_nsec / 1000);
-	printf("[%10.3f] done drawing\n", time / 1000.0);
+//	printf("[%10.3f] done drawing\n", time / 1000.0);
 
 	uint32_t width = gbm_bo_get_width(B->gbm_bo);
 	uint32_t height = gbm_bo_get_height(B->gbm_bo);
 	uint32_t stride = gbm_bo_get_stride(B->gbm_bo);
 	uint32_t handle = gbm_bo_get_handle(B->gbm_bo).u32;
-//	printf("%d\n", handle);
 
-	drmModeAddFB(B->gpu_fd, width, height, COLOR_DEPTH, BIT_PER_PIXEL,
-	stride, handle, &B->fb_id);
+	if (!B->fb_id[i]) {
+		drmModeAddFB(B->gpu_fd, width, height, COLOR_DEPTH,
+		BIT_PER_PIXEL, stride, handle, &B->fb_id[i]);
+	}
 
 	if (drmModeAtomicAddProperty(B->req, B->plane_id,
-	plane_props_id.fb_id, B->fb_id) < 0)
+	plane_props_id.fb_id, B->fb_id[i]) < 0)
 		fprintf(stderr, "atomic add property failed\n");
 	if (drmModeAtomicCommit(B->gpu_fd, B->req, DRM_MODE_PAGE_FLIP_EVENT |
 	DRM_MODE_ATOMIC_NONBLOCK, server))
 		fprintf(stderr, "atomic commit failed\n");
+	
+	i = !i;
 }
 
 // IMPORTANTE: all'entrata il vblank è iniziato, non finito
@@ -130,19 +123,19 @@ void render(struct server *server) {
 static void page_flip_handler(int gpu_fd, unsigned int sequence, unsigned int
 tv_sec, unsigned int tv_usec, void *user_data) {
 	struct server *server = user_data;
-	struct timespec tp;
+/*	struct timespec tp;
 	unsigned int time;
 	clock_gettime(CLOCK_REALTIME, &tp);
 	time = (tp.tv_sec * 1000000L) + (tp.tv_nsec / 1000);
-	printf("[%10.3f] VBLANK\n", time / 1000.0);
+	printf("[%10.3f] VBLANK\n", time / 1000.0);*/
 
-	struct timespec tq;
+/*	struct timespec tq;
 	tq.tv_sec = 0;
 	tq.tv_nsec = 3000000L;
 	// Aspettare qualche millisecondo rimuove il tearing perchè sto usando
 	// un solo buffer e stavo disegnando mentre ero ancora nel periodo di
 	// vblank/scanout
-	nanosleep(&tq, &tp);
+	nanosleep(&tq, &tp);*/
 
 	struct compositor *compositor;
 	wl_list_for_each(compositor, &server->compositor_list, link) {
@@ -180,15 +173,14 @@ static int key_ev_handler(int key_fd, uint32_t mask, void *data) {
 
 int drm_setup(struct backend *B);
 int gbm_setup(struct backend *B);
-int egl_setup(struct backend *B);
 int end(struct backend *B);
 
 static void compositor_bind(struct wl_client *client, void *data, uint32_t
 version, uint32_t id) {
-	struct server *server = data; //only need compositor_list for now
+	struct server *server = data;
 	struct wl_resource *resource = wl_resource_create(client,
 	&wl_compositor_interface, version, id);
-	struct compositor *compositor = compositor_new(resource);
+	struct compositor *compositor = compositor_new(resource, server->egl);
 	wl_list_insert(&server->compositor_list, &compositor->link);
 }
 
@@ -224,7 +216,8 @@ int main(int argc, char *argv[]) {
 	if (drm_setup(B))
 		return 1;
 	gbm_setup(B);
-	egl_setup(B);
+	
+	server->egl = egl_setup(B->gbm_device, B->gbm_surface, D);
 
 	server->renderer = renderer_setup();
 	
@@ -234,9 +227,14 @@ int main(int argc, char *argv[]) {
 	wl_event_loop_add_fd(el, B->gpu_fd, WL_EVENT_READABLE, gpu_ev_handler, 0);
 	wl_event_loop_add_fd(el, B->key_fd, WL_EVENT_READABLE, key_ev_handler, D);
 
-	pid_t pid = fork();
-	if (!pid)
-		execl("/bin/weston-simple-shm", "weston-simple-shm", (char*)0);
+	if (argc > 1) {
+		pid_t pid = fork();
+		if (!pid) {
+			char client[64];
+			sprintf(client, "/bin/%s", argv[1]);
+			execl(client, argv[1], (char*)0);
+		}
+	}
 
 	wl_display_run(D);
 
@@ -336,88 +334,4 @@ int gbm_setup(struct backend *B) {
 	printf("gbm_surface_create successful\n");
 	
 	return 0;
-}
-
-int egl_setup(struct backend *B) {
-	B->egl_display = eglGetPlatformDisplay(EGL_PLATFORM_GBM_MESA,
-	B->gbm_device, NULL);
-	B->egl_context = EGL_NO_CONTEXT;
-	if (B->egl_display == EGL_NO_DISPLAY) {
-		fprintf(stderr, "eglGetPlatformDisplay failed\n");
-	}
-	printf("\neglGetPlatformDisplay successful\n");
-
-	EGLint major, minor;
-	if (eglInitialize(B->egl_display, &major, &minor) == EGL_FALSE) {
-		fprintf(stderr, "eglInitialize failed\n");
-	}
-	printf("eglInitialize successful (EGL %i.%i)\n", major, minor);
-	
-	if (eglBindAPI(EGL_OPENGL_ES_API) == EGL_FALSE) {
-		fprintf(stderr, "eglBindAPI failed\n");
-	}
-	printf("eglBindAPI successful\n");
-
-// 	`size` is the upper value of the possible values of `matching`
-	const int size = 1;
-	int matching;
-	const EGLint attrib_required[] = {
-		EGL_COLOR_BUFFER_TYPE, EGL_RGB_BUFFER,
-		EGL_RED_SIZE, 8,
-		EGL_GREEN_SIZE, 8,
-		EGL_BLUE_SIZE, 8,
-		EGL_ALPHA_SIZE, 8,
-		EGL_DEPTH_SIZE, 24,
-		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES3_BIT,
-		EGL_NATIVE_RENDERABLE, EGL_TRUE,
-		EGL_NATIVE_VISUAL_ID, GBM_FORMAT_XRGB8888,
-	//	EGL_NATIVE_VISUAL_TYPE, ? 
-	EGL_NONE};
-
-	EGLConfig *config = malloc(size*sizeof(EGLConfig));
-	eglChooseConfig(B->egl_display, attrib_required, config, size, &matching);
-	printf("EGLConfig matching: %i (requested: %i)\n", matching, size);
-	
-	const EGLint attribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
-	
-	B->egl_context = eglCreateContext(B->egl_display, *config, EGL_NO_CONTEXT, attribs);
-	if (B->egl_context == EGL_NO_CONTEXT) {
-		fprintf(stderr, "eglGetCreateContext failed\n");
-	}
-	printf("eglCreateContext successful\n");
-	B->egl_surface = eglCreatePlatformWindowSurface(B->egl_display, *config,
-	B->gbm_surface, NULL);
-	if (B->egl_surface == EGL_NO_SURFACE) {
-		fprintf(stderr, "eglCreatePlatformWindowSurface failed\n");
-	}
-	printf("eglCreatePlatformWindowSurface successful\n");
-
-	if (eglMakeCurrent(B->egl_display, B->egl_surface, B->egl_surface, B->egl_context) == EGL_FALSE) {
-		fprintf(stderr, "eglMakeCurrent failed\n");
-	}
-	printf("eglMakeCurrent successful (context binding)\n");
-
-	return 0;
-}
-
-const char *GetError(EGLint error_code) {
-	switch (error_code) {
-	case EGL_SUCCESS:             return "EGL_SUCCESS";
-	case EGL_NOT_INITIALIZED:     return "EGL_NOT_INITITALIZED";
-	case EGL_BAD_ACCESS:          return "EGL_BAD_ACCESS";
-	case EGL_BAD_ALLOC:           return "EGL_BAD_ALLOC";
-	case EGL_BAD_ATTRIBUTE:       return "EGL_BAD_ATTRIBUTE";
-	case EGL_BAD_CONTEXT:         return "EGL_BAD_CONTEXT";
-	case EGL_BAD_CONFIG:          return "EGL_BAD_CONFIG";
-	case EGL_BAD_CURRENT_SURFACE: return "EGL_BAD_CURRENT_SURFACE";
-	case EGL_BAD_DISPLAY:         return "EGL_BAD_DISPLAY";
-	case EGL_BAD_SURFACE:         return "EGL_BAD_SURFACE";
-	case EGL_BAD_MATCH:           return "EGL_BAD_MATCH";
-	case EGL_BAD_PARAMETER:       return "EGL_BAD_PARAMETER";
-	case EGL_BAD_NATIVE_PIXMAP:   return "EGL_BAD_NATIVE_PIXMAP";
-	case EGL_BAD_NATIVE_WINDOW:   return "EGL_BAD_NATIVE_WINDOW";
-	case EGL_CONTEXT_LOST:        return "EGL_CONTEXT_LOST";
-	default:                      return "Unknown error";
-	}
 }

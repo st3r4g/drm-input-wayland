@@ -11,7 +11,7 @@ wl_resource *resource, uint32_t id) {
 	struct compositor *compositor = wl_resource_get_user_data(resource);
 	struct wl_resource *surface_resource = wl_resource_create(client,
 	&wl_surface_interface, 4, id);
-	struct surface *surface = surface_new(surface_resource);
+	struct surface *surface = surface_new(surface_resource, compositor->egl);
 	compositor->surface_list;
 	surface->link;
 	wl_list_insert(&compositor->surface_list, &surface->link);
@@ -29,9 +29,10 @@ static const struct wl_compositor_interface impl = {
 	.create_region = compositor_create_region
 };
 
-struct compositor *compositor_new(struct wl_resource *resource) {
+struct compositor *compositor_new(struct wl_resource *resource, struct egl *egl) {
 	struct compositor *compositor = calloc(1, sizeof(struct compositor));
 	wl_list_init(&compositor->surface_list);
+	compositor->egl = egl;
 	wl_resource_set_implementation(resource, &impl, compositor, 0);
 	return compositor;
 }

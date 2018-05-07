@@ -15,6 +15,8 @@
  * and dma-fence FDs as outputs.
  */
 
+#include <EGL/egl.h>
+
 struct texture;
 
 struct renderer *renderer_setup();
@@ -23,6 +25,9 @@ void renderer_clear();
 
 struct texture *renderer_tex_from_data(const int32_t width, const int32_t
 height, const void *data);
+
+struct texture *renderer_tex_from_egl_image(const int32_t width, const int32_t
+height, EGLImage image);
 
 void renderer_tex_draw(const struct renderer *renderer, const struct texture
 *texture);

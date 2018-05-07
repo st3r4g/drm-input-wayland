@@ -9,7 +9,9 @@ struct surface {
 	struct texture *texture;
 	struct wl_resource *frame;
 
+	struct egl *egl;
+
 	struct wl_list link;
 };
 
-struct surface *surface_new(struct wl_resource *resource);
+struct surface *surface_new(struct wl_resource *resource, struct egl *egl);

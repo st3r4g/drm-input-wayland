@@ -13,6 +13,6 @@ Folders explained:
 
 the compositor has now a GLES3 renderer!
 
-TODO: manage GBM surfaces properly (add double buffering and remove nanosleep)
+ISSUES: upside down textures, no alpha, fixed texture size
 
 TODO: reorganize code and get rid of 99 folder

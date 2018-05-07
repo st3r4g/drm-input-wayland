@@ -139,6 +139,14 @@ tv_sec, unsigned int tv_usec, void *user_data) {
 
 	struct compositor *compositor;
 	wl_list_for_each(compositor, &server->compositor_list, link) {
+/*		TODO: IDEA -> liste con gli elementi da trattare!
+		struct frame_callback *fc, *tmp;
+		wl_list_for_each_safe(fc, tmp, &compositor->frame_callback_list, link) {
+			unsigned int ms = tv_sec * 1000 + tv_usec / 1000;
+			wl_callback_send_done(fc->frame, (uint32_t)ms);
+			wl_resource_destroy(fc->frame);
+			wl_list_remove(fc);
+		}*/
 		struct surface *surface;
 		wl_list_for_each(surface, &compositor->surface_list, link) {
 			if (surface->frame) {

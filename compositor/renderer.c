@@ -10,6 +10,7 @@
 
 struct renderer {
 	GLuint program;
+	GLint view[4];
 };
 
 struct texture {
@@ -22,20 +23,26 @@ static PFNGLEGLIMAGETARGETTEXTURE2DOESPROC glEGLImageTargetTexture2DOES = 0;
 GLuint CreateProgram(const char *name);
 char *GetShaderSource(const char *src_file);
 
-struct renderer *renderer_setup() {
+struct renderer *renderer_setup(int width, int height) {
 	struct renderer *renderer = calloc(1, sizeof(struct renderer));
 	glEGLImageTargetTexture2DOES = (PFNGLEGLIMAGETARGETTEXTURE2DOESPROC)
 	eglGetProcAddress("glEGLImageTargetTexture2DOES");
 	renderer->program = CreateProgram("texture");
+	glGetIntegerv(GL_VIEWPORT, renderer->view);
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
+	glEnable(GL_DEPTH_TEST);
 	return renderer;
 }
 
 void renderer_clear() {
-	glClear(GL_COLOR_BUFFER_BIT);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 struct texture *renderer_tex(const int32_t width, const int32_t height);
+
+/*
+ * We pass GL_BGRA_EXT because shm uses ARGB but with different endianness
+ */
 
 struct texture *renderer_tex_from_data(const int32_t width, const int32_t
 height, const void *data) {
@@ -65,10 +72,10 @@ struct texture *renderer_tex(const int32_t width, const int32_t height) {
 	glBindVertexArray(*vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
 	GLfloat rect[] = {
-		-0.5f, -0.5f, 0.0f, 0.0f, // left bottom
-		+0.5f, -0.5f, 1.0f, 0.0f, // right bottom
-		-0.5f, +0.5f, 0.0f, 1.0f, // left top
-		+0.5f, +0.5f, 1.0f, 1.0f, // right top
+		0.0f, 0.0f, 0.0f, 0.0f, // left bottom
+		width, 0.0f, 1.0f, 0.0f, // right bottom
+		0.0f, height, 0.0f, 1.0f, // left top
+		width, height, 1.0f, 1.0f, // right top
 	};
 	glBufferData(GL_ARRAY_BUFFER, sizeof(rect), rect, GL_STATIC_DRAW);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4*sizeof(GLfloat), 0);
@@ -85,6 +92,10 @@ struct texture *renderer_tex(const int32_t width, const int32_t height) {
 	return texture;
 }
 
+/*
+ * Setting the projection matrix like this works but I don't know exactly why
+ */
+
 void renderer_tex_draw(const struct renderer *renderer, const struct texture
 *texture) {
 	if (texture) {
@@ -95,7 +106,8 @@ void renderer_tex_draw(const struct renderer *renderer, const struct texture
 		glUseProgram(program);
 
 		GLfloat matrix[16];
-		algebra_matrix_rotation_x(matrix, 0);
+		GLint width = renderer->view[2], height = renderer->view[3];
+		algebra_matrix_ortho(matrix, 0, width, height, 0, -1, 1);
 		GLint loc = glGetUniformLocation(program, "matrix");
 		glUniformMatrix4fv(loc, 1, GL_TRUE, matrix);
 		glBindTexture(GL_TEXTURE_2D, tex);

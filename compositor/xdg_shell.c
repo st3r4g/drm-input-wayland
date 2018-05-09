@@ -103,8 +103,14 @@ static void xdg_surface_destroy(struct wl_client *client, struct wl_resource
 
 static void xdg_surface_get_toplevel(struct wl_client *client, struct
 wl_resource *resource, uint32_t id) {
-	struct wl_resource *res = wl_resource_create(client, &zxdg_toplevel_v6_interface, 1, id);
-	wl_resource_set_implementation(res, &toplevel_impl, 0, 0);
+	struct wl_resource *toplevel_resource = wl_resource_create(client,
+	&zxdg_toplevel_v6_interface, 1, id);
+	wl_resource_set_implementation(toplevel_resource, &toplevel_impl, 0, 0);
+	struct wl_array array;
+	wl_array_init(&array);
+	int32_t *states = wl_array_add(&array, sizeof(int32_t));
+	states[0] = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
+	zxdg_toplevel_v6_send_configure(toplevel_resource, 800, 600, &array);
 }
 
 static void xdg_surface_get_popup(struct wl_client *client, struct wl_resource
@@ -131,6 +137,17 @@ static const struct zxdg_surface_v6_interface surface_impl = {
 	.ack_configure = xdg_surface_ack_configure
 };
 
+struct xdg_surface *xdg_shell_surface_new(struct wl_resource *resource,
+struct wl_resource *surface) {
+	struct xdg_surface *xdg_surface = calloc(1, sizeof(struct
+	xdg_surface));
+	xdg_surface->surface = surface;
+	wl_resource_set_implementation(resource, &surface_impl,
+	xdg_surface, 0);
+	zxdg_surface_v6_send_configure(resource, 0);
+	return xdg_surface;
+}
+
 /* XDG SHELL */
 
 static void xdg_shell_destroy(struct wl_client *client, struct wl_resource
@@ -145,9 +162,9 @@ wl_resource *resource, uint32_t id) {
 
 static void xdg_shell_get_xdg_surface(struct wl_client *client, struct
 wl_resource *resource, uint32_t id, struct wl_resource *surface) {
-	struct wl_resource *res = wl_resource_create(client, &zxdg_surface_v6_interface, 1, id);
-	wl_resource_set_implementation(res, &surface_impl, 0, 0);
-	zxdg_surface_v6_send_configure(res, 0);
+	struct wl_resource *surface_resource = wl_resource_create(client,
+	&zxdg_surface_v6_interface, 1, id);
+	xdg_shell_surface_new(surface_resource, surface);
 }
 
 static void xdg_shell_pong(struct wl_client *client, struct wl_resource

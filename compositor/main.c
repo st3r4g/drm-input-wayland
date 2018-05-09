@@ -25,6 +25,7 @@
 
 #include "compositor.h"
 #include "output.h"
+#include "seat.h"
 #include "surface.h"
 #include "xdg_shell.h"
 
@@ -56,10 +57,12 @@ struct backend {
 };
 
 struct server {
+	struct wl_display *display;
 	struct backend *backend;
 	struct egl *egl;
 	struct renderer *renderer;
 	struct wl_list compositor_list;
+	struct wl_list seat_list;
 };
 
 void render(struct server *server) {
@@ -171,11 +174,18 @@ static int gpu_ev_handler(int gpu_fd, uint32_t mask, void *data) {
 }
 
 static int key_ev_handler(int key_fd, uint32_t mask, void *data) {
-	struct wl_display *D = data;
+	struct server *server = data;
 	struct input_event ev;
 	read(key_fd, &ev, sizeof(struct input_event));
-	if (ev.type == EV_KEY && ev.value != 0)
-		wl_display_terminate(D);
+	if (ev.type == EV_KEY) {
+		uint32_t state = ev.value > 0 ? 1 : 0;
+		struct seat *seat;
+		wl_list_for_each(seat, &server->seat_list, link) {
+			wl_keyboard_send_key(seat->keyb, 0, 0, ev.code, state);
+		}
+		if (ev.code == KEY_ESC)
+			wl_display_terminate(server->display);
+	}
 	return 0;
 }
 
@@ -190,6 +200,15 @@ version, uint32_t id) {
 	&wl_compositor_interface, version, id);
 	struct compositor *compositor = compositor_new(resource, server->egl);
 	wl_list_insert(&server->compositor_list, &compositor->link);
+}
+
+static void seat_bind(struct wl_client *client, void *data, uint32_t version,
+uint32_t id) {
+	struct server *server = data;
+	struct wl_resource *resource = wl_resource_create(client,
+	&wl_seat_interface, version, id);
+	struct seat *seat = seat_new(resource);
+	wl_list_insert(&server->seat_list, &seat->link);
 }
 
 static void output_bind(struct wl_client *client, void *data, uint32_t version,
@@ -209,12 +228,15 @@ version, uint32_t id) {
 int main(int argc, char *argv[]) {
 	struct server *server = calloc(1, sizeof(struct server));
 	wl_list_init(&server->compositor_list);
+	wl_list_init(&server->seat_list);
 
-	struct wl_display *D = wl_display_create();
+	server->display = wl_display_create();
+	struct wl_display *D = server->display;
 	wl_display_add_socket_auto(D);
 
 	wl_global_create(D, &wl_compositor_interface, 4, server,
 	compositor_bind);
+	wl_global_create(D, &wl_seat_interface, 1, server, seat_bind);
 	wl_global_create(D, &wl_output_interface, 3, 0, output_bind);
 	wl_display_init_shm(D);
 	wl_global_create(D, &zxdg_shell_v6_interface, 1, 0, xdg_shell_bind);
@@ -233,7 +255,8 @@ int main(int argc, char *argv[]) {
 	
 	struct wl_event_loop *el = wl_display_get_event_loop(D);
 	wl_event_loop_add_fd(el, B->gpu_fd, WL_EVENT_READABLE, gpu_ev_handler, 0);
-	wl_event_loop_add_fd(el, B->key_fd, WL_EVENT_READABLE, key_ev_handler, D);
+	wl_event_loop_add_fd(el, B->key_fd, WL_EVENT_READABLE, key_ev_handler,
+	server);
 
 	if (argc > 1) {
 		pid_t pid = fork();

@@ -4,9 +4,9 @@
 #include <GLES3/gl3.h>
 #include <GLES2/gl2ext.h>
 
-#include <backend/algebra.h>
 #include <backend/egl.h>
 #include <backend/renderer.h>
+#include <util/algebra.h>
 
 struct renderer {
 	GLuint program;
@@ -133,8 +133,8 @@ GLuint CreateProgram(const char *name)
 	GLuint vert = glCreateShader(GL_VERTEX_SHADER);
 	GLuint frag = glCreateShader(GL_FRAGMENT_SHADER);
 	char vert_path[64], frag_path[64];
-	sprintf(vert_path, "shaders/%s.vert", name);
-	sprintf(frag_path, "shaders/%s.frag", name);
+	sprintf(vert_path, "../shaders/%s.vert", name);
+	sprintf(frag_path, "../shaders/%s.frag", name);
 	char *vert_src_handle = GetShaderSource(vert_path);
 	char *frag_src_handle = GetShaderSource(frag_path);
 	const char *vert_src = vert_src_handle;

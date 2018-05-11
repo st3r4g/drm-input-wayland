@@ -1,6 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
-#include "seat.h"
-#include "keyboard.h"
+#include <wl/seat.h>
+#include <wl/keyboard.h>
 #include <wayland-server-protocol.h>
 #include <stdlib.h>
 

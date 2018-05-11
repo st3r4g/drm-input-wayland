@@ -1,7 +1,11 @@
 #define _POSIX_C_SOURCE 200809L
-#include "xdg_shell.h"
-#include "protocols/xdg-shell-unstable-v6-server-protocol.h"
+#include <wl/surface.h>
+#include <xdg/xdg_shell.h>
+#include <protocols/xdg-shell-unstable-v6-server-protocol.h>
+#include <wayland-server-protocol.h>
 
+#include <string.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 /* XDG TOPLEVEL */
@@ -103,8 +107,17 @@ static void xdg_surface_destroy(struct wl_client *client, struct wl_resource
 
 static void xdg_surface_get_toplevel(struct wl_client *client, struct
 wl_resource *resource, uint32_t id) {
-	struct wl_resource *res = wl_resource_create(client, &zxdg_toplevel_v6_interface, 1, id);
-	wl_resource_set_implementation(res, &toplevel_impl, 0, 0);
+	struct wl_resource *toplevel_resource = wl_resource_create(client,
+	&zxdg_toplevel_v6_interface, 1, id);
+	wl_resource_set_implementation(toplevel_resource, &toplevel_impl, 0, 0);
+	struct wl_array array;
+	wl_array_init(&array);
+	int32_t *state1 = wl_array_add(&array, sizeof(int32_t));
+	*state1 = ZXDG_TOPLEVEL_V6_STATE_ACTIVATED;
+	int32_t *state2 = wl_array_add(&array, sizeof(int32_t));
+	*state2 = ZXDG_TOPLEVEL_V6_STATE_MAXIMIZED;
+	zxdg_toplevel_v6_send_configure(toplevel_resource, 1366, 768, &array);
+	zxdg_surface_v6_send_configure(resource, 0);
 }
 
 static void xdg_surface_get_popup(struct wl_client *client, struct wl_resource
@@ -115,12 +128,31 @@ static void xdg_surface_get_popup(struct wl_client *client, struct wl_resource
 
 static void xdg_surface_set_window_geometry(struct wl_client *client, struct
 wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
+	struct xdg_surface *xdg_surface = wl_resource_get_user_data(resource);
+	xdg_surface->pending->window_geometry.x = x;
+	xdg_surface->pending->window_geometry.y = x;
+	xdg_surface->pending->window_geometry.width = width;
+	xdg_surface->pending->window_geometry.height = height;
+}
 
+static enum wl_iterator_result keyboard_enter_surface(struct wl_resource *resource,
+void *user_data) {
+	if (!strcmp(wl_resource_get_class(resource), "wl_keyboard")) {
+		struct wl_resource *xdg_surface_resource = user_data;
+		struct xdg_surface *xdg_surface =
+		wl_resource_get_user_data(xdg_surface_resource);
+		struct wl_array array;
+		wl_array_init(&array);
+		wl_keyboard_send_enter(resource, 0, xdg_surface->surface,
+		&array);
+		return WL_ITERATOR_STOP;
+	}
+	return WL_ITERATOR_CONTINUE;
 }
 
 static void xdg_surface_ack_configure(struct wl_client *client, struct
 wl_resource *resource, uint32_t serial) {
-
+	wl_client_for_each_resource(client, keyboard_enter_surface, resource);
 }
 
 static const struct zxdg_surface_v6_interface surface_impl = {
@@ -130,6 +162,33 @@ static const struct zxdg_surface_v6_interface surface_impl = {
 	.set_window_geometry = xdg_surface_set_window_geometry,
 	.ack_configure = xdg_surface_ack_configure
 };
+
+static void commit_notify(struct wl_listener *listener, void *data) {
+	struct xdg_surface *xdg_surface;
+	xdg_surface = wl_container_of(listener, xdg_surface, commit);
+	struct xdg_surface_state *pending = xdg_surface->pending, *current =
+	xdg_surface->current;
+
+	current->window_geometry.x = pending->window_geometry.x;
+	current->window_geometry.y = pending->window_geometry.y;
+	current->window_geometry.width = pending->window_geometry.width;
+	current->window_geometry.height = pending->window_geometry.height;
+}
+
+struct xdg_surface *xdg_surface_new(struct wl_resource *resource,
+struct wl_resource *surface_resource) {
+	struct surface *surface = wl_resource_get_user_data(surface_resource);
+	struct xdg_surface *xdg_surface = calloc(1, sizeof(struct
+	xdg_surface));
+	xdg_surface->pending = calloc(1, sizeof(struct xdg_surface_state));
+	xdg_surface->current = calloc(1, sizeof(struct xdg_surface_state));
+	xdg_surface->surface = surface_resource;
+	xdg_surface->commit.notify = commit_notify;
+	wl_signal_add(&surface->commit, &xdg_surface->commit);
+	wl_resource_set_implementation(resource, &surface_impl,
+	xdg_surface, 0);
+	return xdg_surface;
+}
 
 /* XDG SHELL */
 
@@ -145,9 +204,12 @@ wl_resource *resource, uint32_t id) {
 
 static void xdg_shell_get_xdg_surface(struct wl_client *client, struct
 wl_resource *resource, uint32_t id, struct wl_resource *surface) {
-	struct wl_resource *res = wl_resource_create(client, &zxdg_surface_v6_interface, 1, id);
-	wl_resource_set_implementation(res, &surface_impl, 0, 0);
-	zxdg_surface_v6_send_configure(res, 0);
+	struct xdg_shell *xdg_shell = wl_resource_get_user_data(resource);
+	struct wl_resource *xdg_surf_resource = wl_resource_create(client,
+	&zxdg_surface_v6_interface, 1, id);
+	struct xdg_surface *xdg_surface = xdg_surface_new(xdg_surf_resource,
+	surface);
+	wl_list_insert(&xdg_shell->xdg_surface_list, &xdg_surface->link);
 }
 
 static void xdg_shell_pong(struct wl_client *client, struct wl_resource
@@ -162,6 +224,9 @@ static const struct zxdg_shell_v6_interface impl = {
 	.pong = xdg_shell_pong
 };
 
-void xdg_shell_new(struct wl_resource *resource) {
-	wl_resource_set_implementation(resource, &impl, 0, 0);
+struct xdg_shell *xdg_shell_new(struct wl_resource *resource) {
+	struct xdg_shell *xdg_shell = calloc(1, sizeof(struct xdg_shell));
+	wl_list_init(&xdg_shell->xdg_surface_list);
+	wl_resource_set_implementation(resource, &impl, xdg_shell, 0);
+	return xdg_shell;
 }

@@ -1,12 +1,11 @@
-#include "egl.h"
+#include <backend/egl.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <gbm.h>
-
 #include <EGL/eglext.h>
 #include <EGL/eglmesaext.h>
+#include <gbm.h>
 
 struct egl {
 	EGLDisplay display;

@@ -1,7 +1,7 @@
-#include "algebra.h"
-
-#include <stdio.h>
 #include <math.h>
+#include <stdio.h>
+
+#include <backend/algebra.h>
 
 void algebra_matrix_rotation_x(float *m, float theta)
 {

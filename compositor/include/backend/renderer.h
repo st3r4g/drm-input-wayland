@@ -1,5 +1,5 @@
-#ifndef RENDERER_H
-#define RENDERER_H
+#ifndef MYRENDERER_H
+#define MYRENDERER_H
 
 /*
  * The renderer interface assumes that an EGL context is already set up, and

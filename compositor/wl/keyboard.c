@@ -1,5 +1,6 @@
 #define _POSIX_C_SOURCE 200809L
-#include "keyboard.h"
+#include <wl/keyboard.h>
+#include <xdg/xdg_shell.h>
 
 #include <errno.h>
 #include <fcntl.h>
@@ -11,19 +12,6 @@
 #include <xkbcommon/xkbcommon.h>
 
 static const struct wl_keyboard_interface impl;
-
-static enum wl_iterator_result enter_a_surface(struct wl_resource *resource,
-void *user_data) {
-//	if (!strcmp(wl_resource_get_class(resource), "zxdg_surface_v6")) {
-	if (wl_resource_get_id(resource) == 10) {
-		struct wl_resource *keyboard = user_data;
-		struct wl_array array;
-		wl_array_init(&array);
-		wl_keyboard_send_enter(keyboard, 0, resource, &array);
-		return WL_ITERATOR_STOP;
-	}
-	return WL_ITERATOR_CONTINUE;
-}
 
 int create_file(off_t size) {
 	static const char template[] = "/compositor-XXXXXX";
@@ -82,10 +70,8 @@ int32_t create_xkb_keymap_fd(uint32_t *size) {
 	rules.variant = config->variant;
 	rules.options = config->options;*/
 
-		printf("hdfgs0\n");
 	struct xkb_keymap *keymap = xkb_map_new_from_names(context, &rules,
 	XKB_KEYMAP_COMPILE_NO_FLAGS);
-		printf("hsgd1\n");
 	if (keymap == NULL) {
 		xkb_context_unref(context);
 		printf("Cannot create XKB keymap\n");
@@ -118,11 +104,14 @@ int32_t create_xkb_keymap_fd(uint32_t *size) {
 }
 
 void keyboard_new(struct wl_resource *resource, struct wl_client *client) {
+	printf("aaa\n");
 	wl_resource_set_implementation(resource, &impl, 0, 0);
 	uint32_t size;
 	int32_t fd = create_xkb_keymap_fd(&size);
 	wl_keyboard_send_keymap(resource, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
 	fd, size);
-	wl_keyboard_send_repeat_info(resource, 25, 600);
-	wl_client_for_each_resource(client, enter_a_surface, resource);
+	if (wl_resource_get_version(resource) >=
+	WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
+		wl_keyboard_send_repeat_info(resource, 25, 600);
+	printf("bbb\n");
 }

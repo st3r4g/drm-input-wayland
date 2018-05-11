@@ -14,20 +14,18 @@
 #include <gbm.h>
 #include <xf86drm.h>
 #include <xf86drmMode.h>
-
 #include <wayland-server-core.h>
 #include <wayland-server-protocol.h>
-#include "protocols/xdg-shell-unstable-v6-server-protocol.h"
 
-#include "algebra.h"
-#include "egl.h"
-#include "renderer.h"
-
-#include "compositor.h"
-#include "output.h"
-#include "seat.h"
-#include "surface.h"
-#include "xdg_shell.h"
+#include <backend/algebra.h>
+#include <backend/egl.h>
+#include <backend/renderer.h>
+#include <protocols/xdg-shell-unstable-v6-server-protocol.h>
+#include <wl/compositor.h>
+#include <wl/output.h>
+#include <wl/seat.h>
+#include <wl/surface.h>
+#include <xdg/xdg_shell.h>
 
 // GBM formats are either GBM_BO_FORMAT_XRGB8888 or GBM_BO_FORMAT_ARGB8888
 static const int COLOR_DEPTH = 24;
@@ -61,7 +59,7 @@ struct server {
 	struct backend *backend;
 	struct egl *egl;
 	struct renderer *renderer;
-	struct wl_list compositor_list;
+	struct wl_list xdg_shell_list;
 	struct wl_list seat_list;
 };
 
@@ -79,10 +77,19 @@ void render(struct server *server) {
 
 	renderer_clear();
 	
-	struct compositor *compositor;
+/*	struct compositor *compositor;
 	wl_list_for_each(compositor, &server->compositor_list, link) {
 		struct surface *surface;
 		wl_list_for_each(surface, &compositor->surface_list, link) {
+			renderer_tex_draw(R, surface->texture);
+		}
+	}*/
+	struct xdg_shell *xdg_shell;
+	wl_list_for_each(xdg_shell, &server->xdg_shell_list, link) {
+		struct xdg_surface *xdg_surface;
+		wl_list_for_each(xdg_surface, &xdg_shell->xdg_surface_list, link) {
+			struct surface *surface =
+			wl_resource_get_user_data(xdg_surface->surface);
 			renderer_tex_draw(R, surface->texture);
 		}
 	}
@@ -140,8 +147,8 @@ tv_sec, unsigned int tv_usec, void *user_data) {
 	// vblank/scanout
 	nanosleep(&tq, &tp);*/
 
-	struct compositor *compositor;
-	wl_list_for_each(compositor, &server->compositor_list, link) {
+	struct xdg_shell *xdg_shell;
+	wl_list_for_each(xdg_shell, &server->xdg_shell_list, link) {
 /*		TODO: IDEA -> liste con gli elementi da trattare!
 		struct frame_callback *fc, *tmp;
 		wl_list_for_each_safe(fc, tmp, &compositor->frame_callback_list, link) {
@@ -150,8 +157,10 @@ tv_sec, unsigned int tv_usec, void *user_data) {
 			wl_resource_destroy(fc->frame);
 			wl_list_remove(fc);
 		}*/
-		struct surface *surface;
-		wl_list_for_each(surface, &compositor->surface_list, link) {
+		struct xdg_surface *xdg_surface;
+		wl_list_for_each(xdg_surface, &xdg_shell->xdg_surface_list, link) {
+			struct surface *surface =
+			wl_resource_get_user_data(xdg_surface->surface);
 			if (surface->frame) {
 				unsigned int ms = tv_sec * 1000 + tv_usec / 1000;
 				wl_callback_send_done(surface->frame, (uint32_t)ms);
@@ -195,11 +204,10 @@ int end(struct backend *B);
 
 static void compositor_bind(struct wl_client *client, void *data, uint32_t
 version, uint32_t id) {
-	struct server *server = data;
+	struct egl *egl = data;
 	struct wl_resource *resource = wl_resource_create(client,
 	&wl_compositor_interface, version, id);
-	struct compositor *compositor = compositor_new(resource, server->egl);
-	wl_list_insert(&server->compositor_list, &compositor->link);
+	compositor_new(resource, egl);
 }
 
 static void seat_bind(struct wl_client *client, void *data, uint32_t version,
@@ -220,26 +228,29 @@ uint32_t id) {
 
 static void xdg_shell_bind(struct wl_client *client, void *data, uint32_t
 version, uint32_t id) {
+	struct server *server = data;
 	struct wl_resource *resource = wl_resource_create(client,
 	&zxdg_shell_v6_interface, version, id);
-	xdg_shell_new(resource);
+	struct xdg_shell *xdg_shell = xdg_shell_new(resource);
+	wl_list_insert(&server->xdg_shell_list, &xdg_shell->link);
 }
 
 int main(int argc, char *argv[]) {
 	struct server *server = calloc(1, sizeof(struct server));
-	wl_list_init(&server->compositor_list);
 	wl_list_init(&server->seat_list);
+	wl_list_init(&server->xdg_shell_list);
 
 	server->display = wl_display_create();
 	struct wl_display *D = server->display;
 	wl_display_add_socket_auto(D);
 
-	wl_global_create(D, &wl_compositor_interface, 4, server,
+	wl_global_create(D, &wl_compositor_interface, 4, server->egl,
 	compositor_bind);
 	wl_global_create(D, &wl_seat_interface, 1, server, seat_bind);
 	wl_global_create(D, &wl_output_interface, 3, 0, output_bind);
 	wl_display_init_shm(D);
-	wl_global_create(D, &zxdg_shell_v6_interface, 1, 0, xdg_shell_bind);
+	wl_global_create(D, &zxdg_shell_v6_interface, 1, server,
+	xdg_shell_bind);
 
 	server->backend = calloc(1, sizeof(struct backend));
 	struct backend *B = server->backend;

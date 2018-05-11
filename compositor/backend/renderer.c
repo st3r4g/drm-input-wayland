@@ -4,9 +4,9 @@
 #include <GLES3/gl3.h>
 #include <GLES2/gl2ext.h>
 
-#include "algebra.h"
-#include "egl.h"
-#include "renderer.h"
+#include <backend/algebra.h>
+#include <backend/egl.h>
+#include <backend/renderer.h>
 
 struct renderer {
 	GLuint program;
@@ -108,6 +108,8 @@ void renderer_tex_draw(const struct renderer *renderer, const struct texture
 		GLfloat matrix[16];
 		GLint width = renderer->view[2], height = renderer->view[3];
 		algebra_matrix_ortho(matrix, 0, width, height, 0, -1, 1);
+//		algebra_matrix_traslation(m2, -32, -32, 0);
+//		algebra_matrix_multiply(matrix, m1, m2);
 		GLint loc = glGetUniformLocation(program, "matrix");
 		glUniformMatrix4fv(loc, 1, GL_TRUE, matrix);
 		glBindTexture(GL_TEXTURE_2D, tex);
@@ -123,7 +125,6 @@ void renderer_delete_tex(struct texture *texture) {
 		GLuint *tex = &texture->tex;
 		glDeleteTextures(1, tex);
 		free(texture);
-		texture = 0;
 	}
 }
 

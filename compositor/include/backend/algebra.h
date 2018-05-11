@@ -1,5 +1,5 @@
-#ifndef ALGEBRA_H
-#define ALGEBRA_H
+#ifndef MYALGEBRA_H
+#define MYALGEBRA_H
 
 void algebra_matrix_rotation_x(float *matrix, float theta);
 void algebra_matrix_rotation_y(float *matrix, float theta);

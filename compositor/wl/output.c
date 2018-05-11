@@ -1,5 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
-#include "output.h"
+#include <wl/output.h>
 #include <wayland-server-protocol.h>
 
 static void output_release(struct wl_client *client, struct wl_resource

@@ -1,5 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
-#include "region.h"
+#include <wl/region.h>
 #include <wayland-server-protocol.h>
 
 static void region_destroy(struct wl_client *client, struct wl_resource

@@ -10,6 +10,11 @@ struct backend;
 struct wl_display;
 struct wl_resource;
 
+/*
+ * The egl interface sets up an EGL context from GBM specific information, and
+ * then acts as a wrapper for some EGL calls used by the Wayland compositor.
+ */
+
 struct egl *egl_setup(struct gbm_device *gbm_device, struct gbm_surface
 *gbm_surface, struct wl_display *D);
 int egl_wl_buffer_has_egl(struct egl *egl, struct wl_resource *buffer);

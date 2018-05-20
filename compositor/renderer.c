@@ -5,7 +5,7 @@
 #include <GLES2/gl2ext.h>
 
 #include <backend/egl.h>
-#include <backend/renderer.h>
+#include <renderer.h>
 #include <util/algebra.h>
 
 struct renderer {

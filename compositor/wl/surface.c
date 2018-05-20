@@ -2,11 +2,11 @@
 #include <wayland-server-protocol.h>
 
 #include <backend/egl.h>
-#include <backend/renderer.h>
+#include <util/log.h>
+#include <renderer.h>
 #include <wl/surface.h>
 
 #include <stdlib.h>
-#include <stdio.h>
 
 static void surface_destroy(struct wl_client *client, struct wl_resource
 *resource) {

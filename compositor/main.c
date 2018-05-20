@@ -1,18 +1,17 @@
 #define _POSIX_C_SOURCE 200809L
-#include <linux/input.h>
-#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include <unistd.h>
 
 #include <wayland-server-core.h>
 #include <wayland-server-protocol.h>
 
 #include <backend/egl.h>
-#include <backend/renderer.h>
+#include <backend/input.h>
 #include <backend/screen.h>
+#include <util/log.h>
 #include <protocols/xdg-shell-unstable-v6-server-protocol.h>
+#include <renderer.h>
 #include <wl/compositor.h>
 #include <wl/output.h>
 #include <wl/seat.h>
@@ -23,12 +22,13 @@ struct server {
 	struct wl_display *display;
 	struct egl *egl;
 	struct renderer *renderer;
+
+	struct input *input;
 	struct screen *screen;
+
 	struct wl_list xdg_shell_list;
 	struct wl_list seat_list;
 };
-
-int key_fd;
 
 void render(struct server *server) {
 	renderer_clear();
@@ -44,7 +44,7 @@ void render(struct server *server) {
 	}
 
 	if (egl_swap_buffers(server->egl) == EGL_FALSE) {
-		fprintf(stderr, "eglSwapBuffers failed\n");
+		errlog("eglSwapBuffers failed");
 	}
 
 	screen_post(server->screen, server);
@@ -55,12 +55,6 @@ void render(struct server *server) {
 static void page_flip_handler(int gpu_fd, unsigned int sequence, unsigned int
 tv_sec, unsigned int tv_usec, void *user_data) {
 	struct server *server = user_data;
-/*	struct timespec tp;
-	unsigned int time;
-	clock_gettime(CLOCK_REALTIME, &tp);
-	time = (tp.tv_sec * 1000000L) + (tp.tv_nsec / 1000);
-	printf("[%10.3f] VBLANK\n", time / 1000.0);*/
-
 /*	struct timespec tq;
 	tq.tv_sec = 0;
 	tq.tv_nsec = 3000000L;
@@ -102,15 +96,13 @@ static int gpu_ev_handler(int fd, uint32_t mask, void *data) {
 
 static int key_ev_handler(int key_fd, uint32_t mask, void *data) {
 	struct server *server = data;
-	struct input_event ev;
-	read(key_fd, &ev, sizeof(struct input_event));
-	if (ev.type == EV_KEY) {
-		uint32_t state = ev.value > 0 ? 1 : 0;
+	unsigned int key, state;
+	if (input_handle_event(server->input, &key, &state)) {
 		struct seat *seat;
 		wl_list_for_each(seat, &server->seat_list, link) {
-			wl_keyboard_send_key(seat->keyb, 0, 0, ev.code, state);
+			wl_keyboard_send_key(seat->keyb, 0, 0, key, state);
 		}
-		if (ev.code == KEY_ESC)
+		if (key == 59) //F1
 			wl_display_terminate(server->display);
 	}
 	return 0;
@@ -167,24 +159,26 @@ int main(int argc, char *argv[]) {
 	xdg_shell_bind);
 
 	server->screen = screen_setup();
+	if (!server->screen)
+		return EXIT_FAILURE;
+	server->input = input_setup();
+	if (!server->input)
+		return EXIT_FAILURE;
 	server->egl = egl_setup(screen_get_gbm_device(server->screen),
 	screen_get_gbm_surface(server->screen), D);
+	if (!server->egl)
+		return EXIT_FAILURE;
 	server->renderer = renderer_setup();
-	
-	key_fd = open("/dev/input/event4", O_RDWR|O_CLOEXEC|O_NOCTTY|O_NONBLOCK);
-	if (key_fd < 0) {
-		perror("open /dev/input/event4");
-		return 1;
-	}
-	ioctl(key_fd, EVIOCGRAB, 1);
+	if (!server->renderer)
+		return EXIT_FAILURE;
 
 	render(server);
 	
 	struct wl_event_loop *el = wl_display_get_event_loop(D);
-	wl_event_loop_add_fd(el, screen_get_fd(server->screen),
+	wl_event_loop_add_fd(el, screen_get_gpu_fd(server->screen),
 	WL_EVENT_READABLE, gpu_ev_handler, 0);
-	wl_event_loop_add_fd(el, key_fd, WL_EVENT_READABLE, key_ev_handler,
-	server);
+	wl_event_loop_add_fd(el, input_get_key_fd(server->input),
+	WL_EVENT_READABLE, key_ev_handler, server);
 
 	if (argc > 1) {
 		pid_t pid = fork();
@@ -198,7 +192,8 @@ int main(int argc, char *argv[]) {
 	wl_display_run(D);
 	
 	wl_display_destroy(D);
+	input_release(server->input);
 	screen_release(server->screen);
-	close(key_fd);
+	free(server);
 	return 0;
 }

@@ -1,6 +1,7 @@
 #define _POSIX_C_SOURCE 200809L
 #include <wl/surface.h>
 #include <xdg/xdg_shell.h>
+#include <util/log.h>
 #include <protocols/xdg-shell-unstable-v6-server-protocol.h>
 #include <wayland-server-protocol.h>
 
@@ -102,7 +103,9 @@ static const struct zxdg_toplevel_v6_interface toplevel_impl = {
 
 static void xdg_surface_destroy(struct wl_client *client, struct wl_resource
 *resource) {
-
+	struct xdg_surface *xdg_surface = wl_resource_get_user_data(resource);
+	wl_list_remove(&xdg_surface->link);
+	errlog("ciao1");
 }
 
 static void xdg_surface_get_toplevel(struct wl_client *client, struct

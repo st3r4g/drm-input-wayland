@@ -1,6 +1,10 @@
 #ifndef MYRENDERER_H
 #define MYRENDERER_H
 
+#include <EGL/egl.h>
+
+struct texture;
+
 /*
  * The renderer interface assumes that an EGL context is already set up, and
  * provides functions to create textures and render them there.
@@ -14,10 +18,6 @@
  * that into KMS with IN_FENCE_FD. This would require buffer handles as inputs
  * and dma-fence FDs as outputs.
  */
-
-#include <EGL/egl.h>
-
-struct texture;
 
 struct renderer *renderer_setup();
 

@@ -33,13 +33,12 @@ struct egl *egl_setup(struct gbm_device *gbm_device, struct gbm_surface
 	if (egl->display == EGL_NO_DISPLAY) {
 		fprintf(stderr, "eglGetPlatformDisplay failed\n");
 	}
-	printf("\neglGetPlatformDisplay successful\n");
 
 	EGLint major, minor;
 	if (eglInitialize(egl->display, &major, &minor) == EGL_FALSE) {
 		fprintf(stderr, "eglInitialize failed\n");
 	}
-	printf("eglInitialize successful (EGL %i.%i)\n", major, minor);
+	printf("EGL %i.%i initialized\n", major, minor);
 
 	if (eglBindWaylandDisplayWL(egl->display, D) == EGL_FALSE) {
 		fprintf(stderr, "eglBindWaylandDisplayWL failed\n");
@@ -48,7 +47,6 @@ struct egl *egl_setup(struct gbm_device *gbm_device, struct gbm_surface
 	if (eglBindAPI(EGL_OPENGL_ES_API) == EGL_FALSE) {
 		fprintf(stderr, "eglBindAPI failed\n");
 	}
-	printf("eglBindAPI successful\n");
 
 // 	`size` is the upper value of the possible values of `matching`
 	const int size = 1;
@@ -69,7 +67,7 @@ struct egl *egl_setup(struct gbm_device *gbm_device, struct gbm_surface
 
 	EGLConfig *config = malloc(size*sizeof(EGLConfig));
 	eglChooseConfig(egl->display, attrib_required, config, size, &matching);
-	printf("EGLConfig matching: %i (requested: %i)\n", matching, size);
+	//printf("EGLConfig matching: %i (requested: %i)\n", matching, size);
 	
 	const EGLint attribs[] = {EGL_CONTEXT_CLIENT_VERSION, 3, EGL_NONE};
 	
@@ -77,18 +75,15 @@ struct egl *egl_setup(struct gbm_device *gbm_device, struct gbm_surface
 	if (egl->context == EGL_NO_CONTEXT) {
 		fprintf(stderr, "eglGetCreateContext failed\n");
 	}
-	printf("eglCreateContext successful\n");
 	egl->surface = eglCreatePlatformWindowSurface(egl->display, *config,
 	gbm_surface, NULL);
 	if (egl->surface == EGL_NO_SURFACE) {
 		fprintf(stderr, "eglCreatePlatformWindowSurface failed\n");
 	}
-	printf("eglCreatePlatformWindowSurface successful\n");
 
 	if (eglMakeCurrent(egl->display, egl->surface, egl->surface, egl->context) == EGL_FALSE) {
 		fprintf(stderr, "eglMakeCurrent failed\n");
 	}
-	printf("eglMakeCurrent successful (context binding)\n");
 
 	return egl;
 }

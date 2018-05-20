@@ -8,9 +8,9 @@ u = 'util/'
 w = 'wl/'
 x = 'xdg/'
 
-src = [b+'egl.c', b+'screen.c']
+src = [b+'egl.c', b+'input.c', b+'screen.c']
 src += p+'xdg-shell-unstable-v6-code.c'
-src += u+'algebra.c'
+src += [u+'algebra.c', u+'log.c']
 src += [w+'compositor.c', w+'keyboard.c', w+'output.c', w+'region.c', w+'seat.c', w+'surface.c']
 src += x+'xdg_shell.c'
 src += ['main.c', 'renderer.c']
@@ -21,6 +21,7 @@ dep = [dependency('egl')]
 dep += dependency('gbm')
 dep += dependency('glesv2')
 dep += dependency('libdrm')
+dep += dependency('libudev')
 dep += dependency('wayland-server')
 dep += dependency('xkbcommon')
 

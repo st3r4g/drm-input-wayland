@@ -1,2 +1,2 @@
 all:
-	gcc -I/usr/include/libdrm main.c -ldrm
+	gcc -I/usr/include/libdrm main.c -o main -ldrm

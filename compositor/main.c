@@ -100,6 +100,7 @@ static int key_ev_handler(int key_fd, uint32_t mask, void *data) {
 	if (input_handle_event(server->input, &key, &state)) {
 		struct seat *seat;
 		wl_list_for_each(seat, &server->seat_list, link) {
+			if (seat->keyb)
 			wl_keyboard_send_key(seat->keyb, 0, 0, key, state);
 		}
 		if (key == 59) //F1
@@ -152,7 +153,7 @@ int main(int argc, char *argv[]) {
 
 	wl_global_create(D, &wl_compositor_interface, 4, server,
 	compositor_bind);
-	wl_global_create(D, &wl_seat_interface, 1, server, seat_bind);
+	wl_global_create(D, &wl_seat_interface, 5, server, seat_bind);
 	wl_global_create(D, &wl_output_interface, 3, 0, output_bind);
 	wl_display_init_shm(D);
 	wl_global_create(D, &zxdg_shell_v6_interface, 1, server,

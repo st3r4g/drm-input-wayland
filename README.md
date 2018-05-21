@@ -10,12 +10,21 @@ Folders explained:
 * 02 -> minimal color rendering (dumb-buffer), exit on keypress
 * compositor -> Wayland protocol implementation [in progress]
 
+## Compositor status
+
 Rendering supports both wl_shm and wl_drm and should display fine, but without
 any optimizations (e.g.: full redraw on every VBLANK, 1 frame of latency for
 fast clients...) at the moment.
 
+Press F1 to exit
+
+Test it with the clients:
+* weston-simple-shm
+* weston-simple-egl
+* weston-terminal
+
 Bugs:
-* CPU usage grows linearly (seen with weston-terminal/top)
-* sometimes simple-egl fails at egl_init
+* sometimes simple-egl fails at egl_init [solved?]
 * sometimes simple-egl fails and the process survives the death of the
 compositor with full CPU usage (related to keyboard_enter_surface code)
+[solved?]

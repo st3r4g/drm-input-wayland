@@ -101,11 +101,15 @@ static const struct zxdg_toplevel_v6_interface toplevel_impl = {
 
 /* XDG SURFACE */
 
+static enum wl_iterator_result keyboard_leave_surface(struct wl_resource *resource,
+void *user_data);
+
 static void xdg_surface_destroy(struct wl_client *client, struct wl_resource
 *resource) {
-	struct xdg_surface *xdg_surface = wl_resource_get_user_data(resource);
-	wl_list_remove(&xdg_surface->link);
-	errlog("ciao1");
+	errlog("xdg_surface_destroy");
+//	wl_resource_destroy(resource);
+	errlog("gdshgd");
+	wl_client_for_each_resource(client, keyboard_leave_surface, resource);
 }
 
 static void xdg_surface_get_toplevel(struct wl_client *client, struct
@@ -136,6 +140,19 @@ wl_resource *resource, int32_t x, int32_t y, int32_t width, int32_t height) {
 	xdg_surface->pending->window_geometry.y = x;
 	xdg_surface->pending->window_geometry.width = width;
 	xdg_surface->pending->window_geometry.height = height;
+}
+
+static enum wl_iterator_result keyboard_leave_surface(struct wl_resource *resource,
+void *user_data) {
+	if (!strcmp(wl_resource_get_class(resource), "wl_keyboard")) {
+		struct wl_resource *xdg_surface_resource = user_data;
+		struct xdg_surface *xdg_surface =
+		wl_resource_get_user_data(xdg_surface_resource);
+		wl_keyboard_send_leave(resource, 0, xdg_surface->surface);
+		wl_resource_destroy(resource);
+		return WL_ITERATOR_STOP;
+	}
+	return WL_ITERATOR_CONTINUE;
 }
 
 static enum wl_iterator_result keyboard_enter_surface(struct wl_resource *resource,
@@ -178,6 +195,15 @@ static void commit_notify(struct wl_listener *listener, void *data) {
 	current->window_geometry.height = pending->window_geometry.height;
 }
 
+void xdg_surface_free(struct wl_resource *resource) {
+	struct xdg_surface *xdg_surface = wl_resource_get_user_data(resource);
+	wl_list_remove(&xdg_surface->link);
+	free(xdg_surface->current);
+	free(xdg_surface->pending);
+	free(xdg_surface);
+	errlog("xdg_surface_free, removed %p", &xdg_surface->link);
+}
+
 struct xdg_surface *xdg_surface_new(struct wl_resource *resource,
 struct wl_resource *surface_resource) {
 	struct surface *surface = wl_resource_get_user_data(surface_resource);
@@ -189,7 +215,7 @@ struct wl_resource *surface_resource) {
 	xdg_surface->commit.notify = commit_notify;
 	wl_signal_add(&surface->commit, &xdg_surface->commit);
 	wl_resource_set_implementation(resource, &surface_impl,
-	xdg_surface, 0);
+	xdg_surface, xdg_surface_free);
 	return xdg_surface;
 }
 

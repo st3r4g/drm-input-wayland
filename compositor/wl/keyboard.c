@@ -1,4 +1,5 @@
 #define _POSIX_C_SOURCE 200809L
+#include <util/log.h>
 #include <wl/keyboard.h>
 #include <xdg/xdg_shell.h>
 
@@ -11,7 +12,17 @@
 #include <wayland-server-protocol.h>
 #include <xkbcommon/xkbcommon.h>
 
-static const struct wl_keyboard_interface impl;
+static void keyboard_release(struct wl_client *client, struct wl_resource
+*resource) {
+	struct wl_resource **dat = wl_resource_get_user_data(resource);
+	wl_resource_destroy(resource);
+	*dat = 0;
+	errlog("keyboard_release");
+}
+
+static const struct wl_keyboard_interface impl = {
+	.release = keyboard_release
+};
 
 int create_file(off_t size) {
 	static const char template[] = "/compositor-XXXXXX";
@@ -103,9 +114,8 @@ int32_t create_xkb_keymap_fd(uint32_t *size) {
 	return keymap_fd;
 }
 
-void keyboard_new(struct wl_resource *resource, struct wl_client *client) {
-	printf("aaa\n");
-	wl_resource_set_implementation(resource, &impl, 0, 0);
+void keyboard_new(struct wl_resource *resource, struct wl_resource **dat) {
+	wl_resource_set_implementation(resource, &impl, dat, 0);
 	uint32_t size;
 	int32_t fd = create_xkb_keymap_fd(&size);
 	wl_keyboard_send_keymap(resource, WL_KEYBOARD_KEYMAP_FORMAT_XKB_V1,
@@ -113,5 +123,4 @@ void keyboard_new(struct wl_resource *resource, struct wl_client *client) {
 	if (wl_resource_get_version(resource) >=
 	WL_KEYBOARD_REPEAT_INFO_SINCE_VERSION)
 		wl_keyboard_send_repeat_info(resource, 25, 600);
-	printf("bbb\n");
 }

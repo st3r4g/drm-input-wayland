@@ -15,8 +15,7 @@ static void seat_get_keyboard(struct wl_client *client, struct wl_resource
 	struct seat *seat = wl_resource_get_user_data(resource);
 	struct wl_resource *keyboard_resource = wl_resource_create(client,
 	&wl_keyboard_interface, wl_resource_get_version(resource), id);
-	seat->keyb = keyboard_resource;
-	keyboard_new(keyboard_resource, &seat->keyb);
+	seat->keyb = keyboard_new(keyboard_resource, seat->input);
 }
 
 static const struct wl_seat_interface impl = {
@@ -32,8 +31,9 @@ void seat_free(struct wl_resource *resource) {
 	errlog("seat_free");
 }
 
-struct seat *seat_new(struct wl_resource *resource) {
+struct seat *seat_new(struct wl_resource *resource, struct input *input) {
 	struct seat *seat = calloc(1, sizeof(struct seat));
+	seat->input = input;
 	wl_resource_set_implementation(resource, &impl, seat, seat_free);
 	wl_seat_send_capabilities(resource, WL_SEAT_CAPABILITY_KEYBOARD);
 	return seat;

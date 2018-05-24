@@ -1,3 +1,8 @@
 #include <wayland-server-core.h>
 
-void keyboard_new(struct wl_resource *resource, struct wl_resource **dat);
+struct keyboard {
+	struct wl_resource *resource;
+	struct input *input;
+};
+
+struct keyboard *keyboard_new(struct wl_resource *resource, struct input *input);

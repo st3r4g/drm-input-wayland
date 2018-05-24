@@ -15,7 +15,8 @@
 #include <wl/compositor.h>
 #include <wl/output.h>
 #include <wl/seat.h>
-#include <wl/surface.h>
+#include <wl/keyboard.h> // da togliere
+#include <wl/surface.h> // da togliere
 #include <xdg/xdg_shell.h>
 
 struct server {
@@ -96,14 +97,19 @@ static int gpu_ev_handler(int fd, uint32_t mask, void *data) {
 
 static int key_ev_handler(int key_fd, uint32_t mask, void *data) {
 	struct server *server = data;
-	unsigned int key, state;
-	if (input_handle_event(server->input, &key, &state)) {
+	struct aaa aaa;
+	if (input_handle_event(server->input, &aaa)) {
 		struct seat *seat;
 		wl_list_for_each(seat, &server->seat_list, link) {
-			if (seat->keyb)
-			wl_keyboard_send_key(seat->keyb, 0, 0, key, state);
+			if (seat->keyb->resource) {
+				wl_keyboard_send_key(seat->keyb->resource, 0, 0, aaa.key,
+				aaa.state);
+				wl_keyboard_send_modifiers(seat->keyb->resource, 0,
+				aaa.mods_depressed, aaa.mods_latched,
+				aaa.mods_locked, aaa.group);
+			}
 		}
-		if (key == 59) //F1
+		if (aaa.key == 59) //F1
 			wl_display_terminate(server->display);
 	}
 	return 0;
@@ -122,7 +128,7 @@ uint32_t id) {
 	struct server *server = data;
 	struct wl_resource *resource = wl_resource_create(client,
 	&wl_seat_interface, version, id);
-	struct seat *seat = seat_new(resource);
+	struct seat *seat = seat_new(resource, server->input);
 	wl_list_insert(&server->seat_list, &seat->link);
 }
 

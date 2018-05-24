@@ -16,6 +16,8 @@ Rendering supports both wl_shm and wl_drm and should display fine, but without
 any optimizations (e.g.: full redraw on every VBLANK, 1 frame of latency for
 fast clients...) at the moment.
 
+Keyboard settings support through XKB_DEFAULT\* environmental variables.
+
 Press F1 to exit
 
 Test it with the clients:

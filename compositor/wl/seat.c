@@ -28,13 +28,17 @@ static const struct wl_seat_interface impl = {
 void seat_free(struct wl_resource *resource) {
 	struct seat *seat = wl_resource_get_user_data(resource);
 	wl_list_remove(&seat->link);
-	errlog("seat_free");
 }
 
 struct seat *seat_new(struct wl_resource *resource, struct input *input) {
 	struct seat *seat = calloc(1, sizeof(struct seat));
 	seat->input = input;
 	wl_resource_set_implementation(resource, &impl, seat, seat_free);
-	wl_seat_send_capabilities(resource, WL_SEAT_CAPABILITY_KEYBOARD);
+
+	if (wl_resource_get_version(resource) >= WL_SEAT_CAPABILITIES_SINCE_VERSION)
+		wl_seat_send_capabilities(resource, WL_SEAT_CAPABILITY_KEYBOARD);
+	if (wl_resource_get_version(resource) >= WL_SEAT_NAME_SINCE_VERSION)
+		wl_seat_send_name(resource, "seat0");
+
 	return seat;
 }

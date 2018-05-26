@@ -13,9 +13,10 @@
 #include <protocols/xdg-shell-unstable-v6-server-protocol.h>
 #include <renderer.h>
 #include <wl/compositor.h>
+#include <wl/data_device_manager.h>
 #include <wl/output.h>
 #include <wl/seat.h>
-#include <wl/keyboard.h> // da togliere
+#include <wl/keyboard.h>
 #include <wl/surface.h> // da togliere
 #include <xdg/xdg_shell.h>
 
@@ -29,7 +30,19 @@ struct server {
 
 	struct wl_list xdg_shell_list;
 	struct wl_list seat_list;
+
+	struct xdg_surface *focused;
 };
+
+void server_focus(struct xdg_surface *new) {
+	struct server *S = new->server;
+	if (S->focused)
+		wl_keyboard_send_leave(S->focused->keyboard, 0, S->focused->surface);
+	struct wl_array array;
+	wl_array_init(&array);
+	wl_keyboard_send_enter(new->keyboard, 0, new->surface, &array);
+	S->focused = new;
+}
 
 void render(struct server *server) {
 	renderer_clear();
@@ -43,12 +56,6 @@ void render(struct server *server) {
 			renderer_tex_draw(server->renderer, surface->texture);
 		}
 	}
-
-	if (egl_swap_buffers(server->egl) == EGL_FALSE) {
-		errlog("eglSwapBuffers failed");
-	}
-
-	screen_post(server->screen, server);
 }
 
 // IMPORTANTE: all'entrata il vblank è iniziato, non finito
@@ -88,6 +95,13 @@ tv_sec, unsigned int tv_usec, void *user_data) {
 	}
 
 	render(server);
+
+	if (egl_swap_buffers(server->egl) == EGL_FALSE) {
+		errlog("eglSwapBuffers failed");
+	}
+
+	screen_post(server->screen, server);
+
 }
 
 static int gpu_ev_handler(int fd, uint32_t mask, void *data) {
@@ -101,13 +115,8 @@ static int key_ev_handler(int key_fd, uint32_t mask, void *data) {
 	if (input_handle_event(server->input, &aaa)) {
 		struct seat *seat;
 		wl_list_for_each(seat, &server->seat_list, link) {
-			if (seat->keyb->resource) {
-				wl_keyboard_send_key(seat->keyb->resource, 0, 0, aaa.key,
-				aaa.state);
-				wl_keyboard_send_modifiers(seat->keyb->resource, 0,
-				aaa.mods_depressed, aaa.mods_latched,
-				aaa.mods_locked, aaa.group);
-			}
+			if (seat->keyb)
+				keyboard_send(seat->keyb, &aaa);
 		}
 		if (aaa.key == 59) //F1
 			wl_display_terminate(server->display);
@@ -122,6 +131,14 @@ version, uint32_t id) {
 	&wl_compositor_interface, version, id);
 	compositor_new(resource, server->egl);
 }
+
+static void data_device_manager_bind(struct wl_client *client, void *data,
+uint32_t version, uint32_t id) {
+	struct wl_resource *resource = wl_resource_create(client,
+	&wl_compositor_interface, version, id);
+	data_device_manager_new(resource);
+}
+
 
 static void seat_bind(struct wl_client *client, void *data, uint32_t version,
 uint32_t id) {
@@ -144,7 +161,7 @@ version, uint32_t id) {
 	struct server *server = data;
 	struct wl_resource *resource = wl_resource_create(client,
 	&zxdg_shell_v6_interface, version, id);
-	struct xdg_shell *xdg_shell = xdg_shell_new(resource);
+	struct xdg_shell *xdg_shell = xdg_shell_new(resource, server);
 	wl_list_insert(&server->xdg_shell_list, &xdg_shell->link);
 }
 
@@ -159,6 +176,8 @@ int main(int argc, char *argv[]) {
 
 	wl_global_create(D, &wl_compositor_interface, 4, server,
 	compositor_bind);
+	wl_global_create(D, &wl_data_device_manager_interface, 1, 0,
+	data_device_manager_bind);
 	wl_global_create(D, &wl_seat_interface, 5, server, seat_bind);
 	wl_global_create(D, &wl_output_interface, 3, 0, output_bind);
 	wl_display_init_shm(D);
@@ -180,6 +199,12 @@ int main(int argc, char *argv[]) {
 		return EXIT_FAILURE;
 
 	render(server);
+	
+	if (egl_swap_buffers(server->egl) == EGL_FALSE) {
+		errlog("eglSwapBuffers failed");
+	}
+
+	screen_post(server->screen, server);
 	
 	struct wl_event_loop *el = wl_display_get_event_loop(D);
 	wl_event_loop_add_fd(el, screen_get_gpu_fd(server->screen),

@@ -11,7 +11,7 @@ x = 'xdg/'
 src = [b+'egl.c', b+'input.c', b+'screen.c']
 src += p+'xdg-shell-unstable-v6-code.c'
 src += [u+'algebra.c', u+'log.c']
-src += [w+'compositor.c', w+'keyboard.c', w+'output.c', w+'region.c', w+'seat.c', w+'surface.c']
+src += [w+'compositor.c', w+'data_device_manager.c', w+'keyboard.c', w+'output.c', w+'region.c', w+'seat.c', w+'surface.c']
 src += x+'xdg_shell.c'
 src += ['main.c', 'renderer.c']
 
@@ -25,4 +25,4 @@ dep += dependency('libudev')
 dep += dependency('wayland-server')
 dep += dependency('xkbcommon')
 
-executable('main', src, dependencies : dep, include_directories : inc)
+executable('compositor', src, dependencies : dep, include_directories : inc)
